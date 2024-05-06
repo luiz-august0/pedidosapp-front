@@ -1,7 +1,8 @@
+import NextSessionProvider from "@/core/auth/providers/NextSessionProvider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
-import NextSessionProvider from "@/core/auth/providers/NextSessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextSessionProvider>
+          <Toaster richColors position="top-right"/>
           {children}
         </NextSessionProvider>
       </body>

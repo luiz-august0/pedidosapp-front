@@ -1,9 +1,10 @@
 'use client';
 
-import { sessionVerify } from "@/core/auth/services/auth";
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { sessionVerify } from '@/core/auth/services/auth';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { ReactNode } from 'react';
+import MenuSideBar from './components/MenuSideBar';
 
 interface PrivateLayoutProps {
   children: ReactNode;
@@ -12,20 +13,21 @@ interface PrivateLayoutProps {
 export default function PrivateLayout({ children }: PrivateLayoutProps) {
   const router = useRouter();
   const { status } = useSession();
-  
-  const handleSession = async() => {
+
+  const handleSession = async () => {
     try {
       await sessionVerify();
     } catch (error) {
       signOut({ redirect: false });
+      router.replace('/login');
     }
-  }
+  };
 
-  if (status == "authenticated") {
+  if (status == 'authenticated') {
     handleSession();
-  } else if (status == "unauthenticated") {
-    router.replace("/login")
+  } else if (status == 'unauthenticated') {
+    router.replace('/login');
   }
 
-  return <>{children}</>;
+  return <MenuSideBar>{children}</MenuSideBar>;
 }

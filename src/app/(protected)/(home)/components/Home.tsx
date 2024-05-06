@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -6,6 +6,7 @@ export default function Home() {
   return (
     <div>
       <h2>Ola, {session?.user?.login}</h2>
+      <button onClick={() => signOut({redirect: false})}>Deslogar</button>
     </div>
   );
 }

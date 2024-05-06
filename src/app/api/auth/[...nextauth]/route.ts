@@ -13,17 +13,22 @@ const nextAuthOptions: NextAuthOptions = {
       },
 
       async authorize(credentials, req) {
-        const sessionResponse = await sessionLogin({
-          tenant: credentials?.tenant ?? '',
-          login: credentials?.login ?? '',
-          password: credentials?.password ?? '',
-        });
+        try {          
+          const sessionResponse = await sessionLogin({
+            tenant: credentials?.tenant ?? '',
+            login: credentials?.login ?? '',
+            password: credentials?.password ?? '',
+          });
 
-        if (sessionResponse) {
-          return sessionResponse;
+          if (sessionResponse) {
+            return sessionResponse;
+          }
+  
+          return null;
+        } catch (error) {
+          throw new Error(JSON.stringify(error?.response?.data))
         }
 
-        return null;
       },
     }),
   ],

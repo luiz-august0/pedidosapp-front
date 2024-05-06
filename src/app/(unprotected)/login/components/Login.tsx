@@ -1,56 +1,60 @@
-import Avatar from '@mui/material/Avatar';
+import { SessionLogin } from '@/core/auth/types/models';
+import { httpErrorToast, successToast } from '@/core/helpers/toast';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { LinearProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import * as React from 'react';
-
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import schemaValidation from './schemaValidation';
 
 const defaultTheme = createTheme();
 
 export default function Login() {
-  const [tenant, setTenant] = React.useState<string>('');
-  const [login, setLogin] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
   const router = useRouter();
+  const form = useForm<SessionLogin>({
+    resolver: yupResolver(schemaValidation),
+  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = async(e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: SessionLogin) => {
+    setLoading(true);
+
+    const signInData = {
+      tenant: data.tenant,
+      login: data.login,
+      password: data.password,
+    };
 
     const result = await signIn('credentials', {
-      tenant,
-      login,
-      password,
-      redirect: false
-    })
+      ...signInData,
+      redirect: false,
+    });
+
+    setLoading(false);
 
     if (result?.error) {
+      httpErrorToast(JSON.parse(result.error));
       return;
     }
 
-    router.replace('/')
-  }
+    successToast('Login realizado com sucesso!');
+
+    router.replace('/');
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -79,23 +83,26 @@ export default function Login() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}></Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Login
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1 }}>
               <TextField
+                {...register('tenant')}
                 margin="normal"
                 required
                 fullWidth
                 id="tenant"
+                hiddenLabel
                 label="Tenant de acesso"
                 name="tenant"
                 autoFocus
-                value={tenant}
-                onChange={(e) => setTenant(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.tenant}
+                helperText={errors.tenant?.message}
               />
               <TextField
+                {...register('login')}
                 margin="normal"
                 required
                 fullWidth
@@ -103,25 +110,31 @@ export default function Login() {
                 label="Login"
                 name="login"
                 autoFocus
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.login}
+                helperText={errors.login?.message}
               />
               <TextField
+                {...register('password')}
                 margin="normal"
                 required
                 fullWidth
                 name="password"
+                autoFocus
+                InputLabelProps={{ shrink: true }}
                 label="Senha"
                 type="password"
                 id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                error={!!errors.password}
+                helperText={errors.password?.message}
               />
-              <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                Sign In
-              </Button>
-              <Copyright sx={{ mt: 5 }} />
+              {loading ? (
+                <LinearProgress color='primary' sx={{ mt: 3, mb: 2 }}/>
+              ) : (
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                  Entrar
+                </Button>
+              )}
             </Box>
           </Box>
         </Grid>
