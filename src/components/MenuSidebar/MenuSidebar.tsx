@@ -1,41 +1,35 @@
-import * as Icon from '@mui/icons-material';
+import * as MUIcon from '@mui/icons-material';
 import { Box, IconButton, Typography } from '@mui/material';
 import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ReactNode, useState } from 'react';
 import { Menu, MenuItem, Sidebar } from 'react-pro-sidebar';
+import { ItemProps, menuItems } from './store/menuItems';
 
 type Props = {
   children: ReactNode;
 };
 
-type ItemProps = {
-  title: string;
-  to: string;
-  icon: JSX.Element;
-  selected: string;
-  setSelected: Dispatch<SetStateAction<string>>;
-};
-
 const Item = ({ title, to, icon }: ItemProps) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const IconRender = MUIcon[icon]; 
 
   return (
-    <MenuItem active={to == '/produtoss' ? true : false} onClick={() => router.push(to)} icon={icon}>
+    <MenuItem active={to==pathname} onClick={() => router.push(to)} icon={<IconRender/>}>
       <Typography fontWeight={'bold'}>{title}</Typography>
     </MenuItem>
   );
 };
 
-export default function MenuSideBar({ children }: Props) {
-  const [selected, setSelected] = useState<string>('Dashboard');
+export default function MenuSidebar({ children }: Props) {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const router = useRouter();
 
-  const logout = () => {
-    signOut({ redirect: false });
-    router.replace("/login");
-  }
+  const logout = async () => {
+    await signOut({ redirect: false });
+    router.replace('/login');
+  };
 
   return (
     <div className="flex flex-row h-screen">
@@ -45,7 +39,7 @@ export default function MenuSideBar({ children }: Props) {
             <Menu>
               <MenuItem
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                icon={isCollapsed ? <Icon.MenuOutlined color="primary" /> : undefined}
+                icon={isCollapsed ? <MUIcon.MenuOutlined color="primary" /> : undefined}
                 style={{
                   margin: '10px 0 20px 0',
                 }}
@@ -56,7 +50,7 @@ export default function MenuSideBar({ children }: Props) {
                       Pedidos APP
                     </Typography>
                     <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                      <Icon.MenuOutlined color="primary" />
+                      <MUIcon.MenuOutlined color="primary" />
                     </IconButton>
                   </Box>
                 )}
@@ -77,20 +71,13 @@ export default function MenuSideBar({ children }: Props) {
                 },
               }}
             >
-              <Item
-                title="Produtos"
-                to="/produtoss"
-                icon={<Icon.Inventory />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Produtos"
-                to="/produtos"
-                icon={<Icon.Inventory />}
-                selected={selected}
-                setSelected={setSelected}
-              />
+              {menuItems.map((e) => (
+                <Item
+                  title={e.title}
+                  to={e.to}
+                  icon={e.icon}
+                />
+              ))}
             </Menu>
           </div>
           <Menu
@@ -107,14 +94,19 @@ export default function MenuSideBar({ children }: Props) {
               },
             }}
           >
-            <MenuItem icon={<Icon.Logout />} onClick={logout}>
+            <MenuItem icon={<MUIcon.Logout />} onClick={logout}>
               <Typography fontWeight={'bold'}>Sair</Typography>
             </MenuItem>
           </Menu>
         </div>
       </Sidebar>
       {!isCollapsed ? (
-        <div className="flex h-screen w-screen p-3 bg-black bg-opacity-60 opacity-95 transition-all">{children}</div>
+        <div
+          className="flex h-screen w-screen p-3 bg-black bg-opacity-60 opacity-95 transition-all"
+          onClick={() => setIsCollapsed(true)}
+        >
+          {children}
+        </div>
       ) : (
         <div className="flex h-screen w-screen p-3 transition-all">{children}</div>
       )}

@@ -1,33 +1,38 @@
 'use client';
 
+import MenuSidebar from '@/components/MenuSidebar/MenuSidebar';
 import { sessionVerify } from '@/core/auth/services/auth';
+import { httpErrorToast } from '@/core/helpers/toast';
+import { AxiosError } from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ReactNode } from 'react';
-import MenuSideBar from './components/MenuSideBar';
+import { ReactNode, useEffect } from 'react';
 
-interface PrivateLayoutProps {
+interface Props {
   children: ReactNode;
 }
 
-export default function PrivateLayout({ children }: PrivateLayoutProps) {
+export default function Layout({ children }: Props) {
   const router = useRouter();
   const { status } = useSession();
 
-  const handleSession = async () => {
-    try {
-      await sessionVerify();
-    } catch (error) {
-      signOut({ redirect: false });
+  useEffect(() => {
+    const handleSession = async () => {
+      try {
+        await sessionVerify();
+      } catch (error) {
+        httpErrorToast(error as AxiosError);
+        await signOut({ redirect: false });
+        router.replace('/login');
+      }
+    };
+
+    if (status == 'authenticated') {
+      handleSession();
+    } else if (status == 'unauthenticated') {
       router.replace('/login');
     }
-  };
+  }, [status]);
 
-  if (status == 'authenticated') {
-    handleSession();
-  } else if (status == 'unauthenticated') {
-    router.replace('/login');
-  }
-
-  return <MenuSideBar>{children}</MenuSideBar>;
+  return <MenuSidebar>{children}</MenuSidebar>;
 }

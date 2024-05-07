@@ -3,25 +3,27 @@
 import { sessionVerify } from '@/core/auth/services/auth';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-interface PrivateLayoutProps {
+interface Props {
   children: ReactNode;
 }
 
-export default function PrivateLayout({ children }: PrivateLayoutProps) {
+export default function Layout({ children }: Props) {
   const router = useRouter();
   const { status } = useSession();
 
-  const handleSession = async () => {
-    await sessionVerify().then(() => {
-      router.replace('/');
-    });
-  };
+  useEffect(() => {
+    const handleSession = async () => {
+      await sessionVerify().then(() => {
+        router.replace('/');
+      });
+    };
 
-  if (status == 'authenticated') {
-    handleSession();
-  }
+    if (status == 'authenticated') {
+      handleSession();
+    }
+  }, [status]);
 
   return <>{children}</>;
 }

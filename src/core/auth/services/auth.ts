@@ -1,6 +1,4 @@
-import { httpErrorToast } from '@/core/helpers/toast';
 import { httpDefaultInstance, httpInstance } from '@/lib/axios/httpInstance';
-import { AxiosError } from 'axios';
 import { SessionLogin } from '../types/models';
 
 export async function sessionLogin(session: SessionLogin) {
@@ -17,11 +15,7 @@ export async function sessionLogin(session: SessionLogin) {
 }
 
 export async function sessionVerify() {
-  try {
-    const { data } = await httpInstance.get('/session');
+  const { data } = await httpInstance.get('/session');
 
-    return data;
-  } catch (error) {
-    httpErrorToast(error as AxiosError);
-  }
+  return data;
 }
