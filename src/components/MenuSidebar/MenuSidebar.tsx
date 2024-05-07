@@ -73,6 +73,7 @@ export default function MenuSidebar({ children }: Props) {
             >
               {menuItems.map((e) => (
                 <Item
+                  key={e.to}
                   title={e.title}
                   to={e.to}
                   icon={e.icon}

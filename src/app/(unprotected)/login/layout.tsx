@@ -23,7 +23,7 @@ export default function Layout({ children }: Props) {
     if (status == 'authenticated') {
       handleSession();
     }
-  }, [status]);
+  }, [status, router]);
 
   return <>{children}</>;
 }

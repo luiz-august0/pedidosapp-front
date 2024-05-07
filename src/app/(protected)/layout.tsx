@@ -3,6 +3,7 @@
 import MenuSidebar from '@/components/MenuSidebar/MenuSidebar';
 import { sessionVerify } from '@/core/auth/services/auth';
 import { httpErrorToast } from '@/core/helpers/toast';
+import { HttpStandardError } from '@/core/shared/types/models';
 import { AxiosError } from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -21,7 +22,7 @@ export default function Layout({ children }: Props) {
       try {
         await sessionVerify();
       } catch (error) {
-        httpErrorToast(error as AxiosError);
+        httpErrorToast(error as AxiosError & HttpStandardError);
         await signOut({ redirect: false });
         router.replace('/login');
       }
@@ -32,7 +33,7 @@ export default function Layout({ children }: Props) {
     } else if (status == 'unauthenticated') {
       router.replace('/login');
     }
-  }, [status]);
+  }, [status, router]);
 
   return <MenuSidebar>{children}</MenuSidebar>;
 }

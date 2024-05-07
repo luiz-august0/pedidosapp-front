@@ -20,8 +20,8 @@ export const infoToast = (message: string) => {
   toast.info(message);
 };
 
-export const httpErrorToast = (error: HttpStandardError | AxiosError) => {
-  const message = error.message ?? (error.response?.data?.message ?? ""); 
+export const httpErrorToast = (error: HttpStandardError & AxiosError) => {
+  const message = error.message ?? ((error.response?.data as any)?.message ?? ""); 
 
   if (error.response?.status == 401 || error.status == 401) {
     warningToast(message);
