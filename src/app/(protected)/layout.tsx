@@ -7,13 +7,14 @@ import { HttpStandardError } from '@/core/shared/types/models';
 import { AxiosError } from 'axios';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface Props {
   children: ReactNode;
 }
 
 export default function Layout({ children }: Props) {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const router = useRouter();
   const { status } = useSession();
 
@@ -35,5 +36,12 @@ export default function Layout({ children }: Props) {
     }
   }, [status, router]);
 
-  return <MenuSidebar>{children}</MenuSidebar>;
+  return (
+    <div className='flex'>
+      <MenuSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
+      <div className='h-full w-full p-10'>
+        {children}
+      </div>
+    </div>
+  );
 }
