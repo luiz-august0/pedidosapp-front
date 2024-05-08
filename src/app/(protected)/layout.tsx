@@ -37,7 +37,7 @@ export default function Layout({ children }: Props) {
   }, [status, router]);
 
   return (
-    <div className='flex'>
+    <div className='flex max-xl:flex-col'>
       <MenuSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
       <div className='h-full w-full p-10'>
         {children}

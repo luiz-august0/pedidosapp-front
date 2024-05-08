@@ -111,7 +111,7 @@ export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex xl:h-screen">
       <Sidebar isCollapsed={true} setIsCollapsed={setIsCollapsed} logout={logout} />
       <Drawer open={!isCollapsed} onClose={() => setIsCollapsed(true)}>
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
