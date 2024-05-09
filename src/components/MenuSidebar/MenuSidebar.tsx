@@ -1,10 +1,16 @@
-import * as MUIcon from '@mui/icons-material';
-import { Box, Drawer, IconButton, Typography, useMediaQuery } from '@mui/material';
-import { signOut } from 'next-auth/react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Dispatch } from 'react';
-import { Menu, MenuItem, Sidebar as ReactSidebar } from 'react-pro-sidebar';
-import { ItemProps, menuItems } from './store/menuItems';
+import * as MUIcon from "@mui/icons-material";
+import {
+  Box,
+  Drawer,
+  IconButton,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { signOut } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { Dispatch } from "react";
+import { Menu, MenuItem, Sidebar as ReactSidebar } from "react-pro-sidebar";
+import { ItemProps, menuItems } from "./store/menuItems";
 
 type Props = {
   isCollapsed: boolean;
@@ -15,7 +21,7 @@ type SidebarProps = Props & {
   logout: () => Promise<void>;
 };
 
-type ItemPropsRender = ItemProps & Pick<Props, 'setIsCollapsed'>;
+type ItemPropsRender = ItemProps & Pick<Props, "setIsCollapsed">;
 
 const Item = ({ title, to, icon, setIsCollapsed }: ItemPropsRender) => {
   const router = useRouter();
@@ -28,8 +34,12 @@ const Item = ({ title, to, icon, setIsCollapsed }: ItemPropsRender) => {
   };
 
   return (
-    <MenuItem active={to == pathname} onClick={handleChooseItem} icon={<IconRender />}>
-      <Typography fontWeight={'bold'}>{title}</Typography>
+    <MenuItem
+      active={to == pathname}
+      onClick={handleChooseItem}
+      icon={<IconRender />}
+    >
+      <Typography fontWeight={"bold"}>{title}</Typography>
     </MenuItem>
   );
 };
@@ -42,14 +52,23 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
           <Menu>
             <MenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
-              icon={isCollapsed ? <MUIcon.MenuOutlined color="primary" /> : undefined}
+              icon={
+                isCollapsed ? (
+                  <MUIcon.MenuOutlined color="primary" />
+                ) : undefined
+              }
               style={{
-                margin: '10px 0 20px 0',
+                margin: "10px 0 20px 0",
               }}
             >
               {!isCollapsed && (
-                <Box display="flex" justifyContent="space-between" alignItems="center" ml="15px">
-                  <Typography fontSize={24} color={'#1976D2'}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  ml="15px"
+                >
+                  <Typography fontSize={24} color={"#1976D2"}>
                     Pedidos APP
                   </Typography>
                   <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -63,19 +82,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
             menuItemStyles={{
               button: ({ active }) => {
                 return {
-                  color: active ? '#E6F4F1' : '#1976D2',
-                  backgroundColor: active ? '#1976D2' : undefined,
-                  transition: '0.2s',
-                  '&:hover': {
-                    backgroundColor: '#E6F4F1',
-                    color: '#1976D2',
+                  color: active ? "#E6F4F1" : "#1976D2",
+                  backgroundColor: active ? "#1976D2" : undefined,
+                  transition: "0.2s",
+                  "&:hover": {
+                    backgroundColor: "#E6F4F1",
+                    color: "#1976D2",
                   },
                 };
               },
             }}
           >
             {menuItems.map((e) => (
-              <Item key={e.to} title={e.title} to={e.to} icon={e.icon} setIsCollapsed={setIsCollapsed} />
+              <Item
+                key={e.to}
+                title={e.title}
+                to={e.to}
+                icon={e.icon}
+                setIsCollapsed={setIsCollapsed}
+              />
             ))}
           </Menu>
         </div>
@@ -83,18 +108,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
           menuItemStyles={{
             button: () => {
               return {
-                color: '#1976D2',
-                transition: '0.2s',
-                '&:hover': {
-                  backgroundColor: '#E6F4F1',
-                  color: '#1976D2',
+                color: "#1976D2",
+                transition: "0.2s",
+                "&:hover": {
+                  backgroundColor: "#E6F4F1",
+                  color: "#1976D2",
                 },
               };
             },
           }}
         >
           <MenuItem icon={<MUIcon.Logout />} onClick={logout}>
-            <Typography fontWeight={'bold'}>Sair</Typography>
+            <Typography fontWeight={"bold"}>Sair</Typography>
           </MenuItem>
         </Menu>
       </div>
@@ -104,24 +129,35 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
 
 export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   const router = useRouter();
-  const matchWidth = useMediaQuery('(max-width:1280px)');
+  const matchWidth = useMediaQuery("(max-width:1280px)");
 
   const logout = async () => {
     await signOut({ redirect: false });
-    router.replace('/login');
+    router.replace("/login");
   };
 
   return (
-    <div className="flex xl:h-screen">
+    <div className="flex xl:h-screen xl:fixed z-50">
       {matchWidth ? (
-        <IconButton onClick={() => setIsCollapsed(!isCollapsed)} style={{ padding: '2.5rem' }}>
+        <IconButton
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          style={{ padding: "2.5rem" }}
+        >
           <MUIcon.MenuOutlined color="primary" />
         </IconButton>
       ) : (
-        <Sidebar isCollapsed={true} setIsCollapsed={setIsCollapsed} logout={logout} />
+        <Sidebar
+          isCollapsed={true}
+          setIsCollapsed={setIsCollapsed}
+          logout={logout}
+        />
       )}
       <Drawer open={!isCollapsed} onClose={() => setIsCollapsed(true)}>
-        <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
+        <Sidebar
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          logout={logout}
+        />
       </Drawer>
     </div>
   );
