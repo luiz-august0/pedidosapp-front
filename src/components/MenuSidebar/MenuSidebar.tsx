@@ -1,5 +1,5 @@
 import * as MUIcon from '@mui/icons-material';
-import { Box, Drawer, IconButton, Typography } from '@mui/material';
+import { Box, Drawer, IconButton, Typography, useMediaQuery } from '@mui/material';
 import { signOut } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Dispatch } from 'react';
@@ -104,6 +104,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
 
 export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   const router = useRouter();
+  const matchWidth = useMediaQuery('(max-width:1280px)');
 
   const logout = async () => {
     await signOut({ redirect: false });
@@ -112,7 +113,13 @@ export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
 
   return (
     <div className="flex xl:h-screen">
-      <Sidebar isCollapsed={true} setIsCollapsed={setIsCollapsed} logout={logout} />
+      {matchWidth ? (
+        <IconButton onClick={() => setIsCollapsed(!isCollapsed)} style={{ padding: '2.5rem' }}>
+          <MUIcon.MenuOutlined color="primary" />
+        </IconButton>
+      ) : (
+        <Sidebar isCollapsed={true} setIsCollapsed={setIsCollapsed} logout={logout} />
+      )}
       <Drawer open={!isCollapsed} onClose={() => setIsCollapsed(true)}>
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
       </Drawer>
