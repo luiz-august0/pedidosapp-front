@@ -2,9 +2,7 @@
 
 import MenuSidebar from '@/components/MenuSidebar/MenuSidebar';
 import { sessionVerify } from '@/core/auth/services/auth';
-import { handlerHttpError, httpErrorToast } from '@/core/helpers/toast';
-import { HttpStandardError } from '@/core/shared/types/models';
-import { AxiosError } from 'axios';
+import { handlerHttpError } from '@/core/helpers/toast';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
@@ -39,7 +37,7 @@ export default function Layout({ children }: Props) {
   return (
     <div className='flex max-xl:flex-col'>
       <MenuSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed}/>
-      <div className='h-screen w-full p-10 ml-20'>
+      <div className='h-screen w-full ml-24 mr-4 pt-10 pb-10'>
         {children}
       </div>
     </div>
