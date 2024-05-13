@@ -1,8 +1,8 @@
 "use client";
 
+import { HttpStandardError } from "@/shared/types/models";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import { HttpStandardError } from "../shared/types/models";
 
 export const successToast = (message: string) => {
   toast.success(message);
@@ -24,12 +24,15 @@ export const handlerHttpError = (error: any) => {
   httpErrorToast(error as HttpStandardError & AxiosError);
 };
 
-export const httpErrorToast = (error: HttpStandardError & AxiosError) => {
-  const message = error.message ?? (error.response?.data as any)?.message ?? "";
+const httpErrorToast = (error: HttpStandardError & AxiosError) => {
+  const message = (error.response?.data as any)?.message ?? (error.message ?? "");
 
   if (error.response?.status == 401 || error.status == 401) {
     warningToast(message);
-  } else {
+  } else if (error.response?.status == 403) {
+    errorToast("Acesso não autorizado");
+  } 
+  else {
     errorToast(message);
   }
 };

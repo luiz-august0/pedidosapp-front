@@ -2,6 +2,7 @@
 
 import MenuSidebar from "@/components/MenuSidebar/MenuSidebar";
 import { sessionVerify } from "@/core/auth/services/auth";
+import { handlerHttpError } from "@/helpers/toast";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
@@ -20,6 +21,7 @@ export default function Layout({ children }: Props) {
       try {
         await sessionVerify();
       } catch (error) {
+        handlerHttpError(error);
         await signOut({ redirect: false });
         router.replace("/login");
       }
@@ -35,7 +37,7 @@ export default function Layout({ children }: Props) {
   return (
     <div className="flex max-md:flex-col">
       <MenuSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-      <div className="h-screen max-md:p-10 md:ml-28 md:mr-8 pt-10 pb-10" style={{ width: "-webkit-fill-available" }}>
+      <div className="h-screen w-full max-md:p-10 md:ml-28 md:mr-8 pt-10 pb-10">
         {children}
       </div>
     </div>

@@ -1,11 +1,11 @@
-import { handlerHttpError } from "@/core/helpers/toast";
-import { PaginationRequestDTO } from "@/core/shared/types/dtos";
+import { handlerHttpError } from "@/helpers/toast";
 import { httpInstance } from "@/lib/axios/httpInstance";
+import { FilterRequestDTO, PaginationRequestDTO } from "@/shared/types/dtos";
 
-export async function getProductsList(paginationDTO: PaginationRequestDTO) {
+export async function getProductsList(paginationDTO?: PaginationRequestDTO, filterRequestDTO?: FilterRequestDTO, sort?: string) {
   try {
     const { data } = await httpInstance.get("/product/filter/page", {
-      params: paginationDTO
+      params: { ...paginationDTO, ...filterRequestDTO, sort },
     });
 
     return data;

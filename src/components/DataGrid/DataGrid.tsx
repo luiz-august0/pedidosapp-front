@@ -1,4 +1,4 @@
-import { Box, Skeleton, SxProps, Theme, useTheme } from "@mui/material";
+import { Box, Skeleton, SxProps, Theme, useMediaQuery, useTheme } from "@mui/material";
 import {
   DataGridProps,
   GridColDef,
@@ -86,6 +86,7 @@ export default function DataGrid({
           disableRowSelectionOnClick
           disableColumnFilter
           disableColumnMenu
+          disableColumnResize={useMediaQuery("(min-width:768px)")}
           autoHeight
           localeText={
             ptBRDataGrid.components?.MuiDataGrid.defaultProps.localeText

@@ -1,5 +1,5 @@
 import { SessionLogin } from '@/core/auth/types/models';
-import { httpErrorToast, successToast } from '@/core/helpers/toast';
+import { handlerHttpError, successToast } from '@/helpers/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LinearProgress } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -47,7 +47,7 @@ export default function Login() {
     setLoading(false);
 
     if (result?.error) {
-      httpErrorToast(JSON.parse(result.error));
+      handlerHttpError(JSON.parse(result.error));
       return;
     }
 
