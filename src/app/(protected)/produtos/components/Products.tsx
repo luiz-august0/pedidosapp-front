@@ -8,11 +8,11 @@ export default function Products() {
 
   return (
     <div>
-      <div className="flex max-xl:flex-col justify-between items-center">
+      <div className="flex max-md:flex-col justify-between items-center">
         <div>
           <Typography fontSize={32}>Produtos</Typography>
         </div>
-        <div className="flex gap-2 max-xl: mt-5">
+        <div className="flex gap-2 max-md: mt-5">
           <Button
             startIcon={<Icon.FilterAlt />}
             color="primary"

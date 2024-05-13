@@ -46,7 +46,7 @@ const Item = ({ title, to, icon, setIsCollapsed }: ItemPropsRender) => {
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
   return (
-    <ReactSidebar collapsed={isCollapsed} backgroundColor="#f2f0f0">
+    <ReactSidebar collapsed={isCollapsed} backgroundColor="#f2f0f0" className="shadow-md">
       <div className="flex flex-col h-screen justify-between">
         <div>
           <Menu>
@@ -129,7 +129,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
 
 export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   const router = useRouter();
-  const matchWidth = useMediaQuery("(max-width:1280px)");
+  const matchWidth = useMediaQuery("(max-width:768px)");
 
   const logout = async () => {
     await signOut({ redirect: false });
@@ -137,7 +137,7 @@ export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   };
 
   return (
-    <div className="flex xl:h-screen xl:fixed z-50">
+    <div className="flex md:h-screen md:fixed z-50">
       {matchWidth ? (
         <IconButton
           onClick={() => setIsCollapsed(!isCollapsed)}
