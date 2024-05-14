@@ -25,6 +25,7 @@ export default function DataGrid({
   ...rest
 }: Props) {
   const { palette } = useTheme();
+  const matchWidth = useMediaQuery("(min-width:768px)");
 
   return (
     <Box sx={{ minHeight: "350px", width: "100%" }}>
@@ -86,7 +87,7 @@ export default function DataGrid({
           disableRowSelectionOnClick
           disableColumnFilter
           disableColumnMenu
-          disableColumnResize={useMediaQuery("(min-width:768px)")}
+          disableColumnResize={matchWidth}
           autoHeight
           localeText={
             ptBRDataGrid.components?.MuiDataGrid.defaultProps.localeText
