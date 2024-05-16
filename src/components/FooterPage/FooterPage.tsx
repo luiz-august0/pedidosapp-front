@@ -6,7 +6,7 @@ type Props = {
   titlePage: string;
   search?: Dispatch<SetStateAction<string | undefined>>;
   setOpenFilter?: Dispatch<SetStateAction<boolean>>;
-  setOpenForm?: Dispatch<SetStateAction<boolean>>;
+  setOpenForm?: () => void;
 };
 
 export default function FooterPage({ titlePage, search, setOpenFilter, setOpenForm }: Props) {

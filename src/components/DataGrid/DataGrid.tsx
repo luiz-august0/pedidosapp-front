@@ -4,7 +4,6 @@ import { DataGridProps, GridColDef, DataGrid as MUIDataGrid } from '@mui/x-data-
 import { ptBRDataGrid } from './ptBRLocale';
 
 type Props = {
-  onRowClick?: () => void;
   loading?: boolean;
   clientPagination?: boolean;
   rows: any[];
@@ -89,6 +88,7 @@ export default function DataGrid({ onRowClick, loading, clientPagination, rows, 
           disableColumnFilter
           disableColumnMenu
           autoHeight
+          onRowClick={onRowClick}
           localeText={ptBRDataGrid.components?.MuiDataGrid.defaultProps.localeText}
           {...rest}
         />

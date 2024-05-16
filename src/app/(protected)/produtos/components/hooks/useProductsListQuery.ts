@@ -34,7 +34,7 @@ export default function useProductsListQuery() {
     const data = await getProductsList(
       { page: pagination.page, size: pagination.pageSize },
       filterBuilder.dto,
-      convertSortModelToString(sort),
+      sort ? convertSortModelToString(sort) : 'id,desc',
     );
 
     setList(data);
@@ -48,6 +48,7 @@ export default function useProductsListQuery() {
   }, [pagination, sort, status, query]);
 
   return {
+    getList,
     list,
     pagination,
     setPagination,

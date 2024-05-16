@@ -14,9 +14,11 @@ type Props = {
   loading: boolean;
   sort?: GridSortModel;
   setSort?: Dispatch<React.SetStateAction<GridSortModel | undefined>>;
+  setProduct: Dispatch<React.SetStateAction<Product | undefined>>;
+  setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ProductsTable({ list, pagination, setPagination, loading, sort, setSort }: Props) {
+export default function ProductsTable({ list, pagination, setPagination, loading, sort, setSort, setProduct, setOpen }: Props) {
   const columns: GridColDef<Product>[] = [
     {
       field: 'id',
@@ -31,8 +33,8 @@ export default function ProductsTable({ list, pagination, setPagination, loading
     {
       field: 'unit',
       headerName: 'Unidade',
-      valueGetter: (params: string) => {
-        return EnumUnitProduct[params];
+      valueGetter: (params: 'UNIT' | 'KILOGRAM' | 'PACKAGE') => {
+        return EnumUnitProduct[params].value;
       },
       flex: 1,
     },
@@ -65,6 +67,10 @@ export default function ProductsTable({ list, pagination, setPagination, loading
       pageSizeOptions={(list?.totalElements ?? 0) > 10 ? [10, 25, 50] : [list?.totalElements ?? 0]}
       sortModel={sort}
       onSortModelChange={setSort}
+      onRowClick={(params) => {
+        setProduct(params.row);
+        setOpen(true);
+      }}
     />
   );
 }
