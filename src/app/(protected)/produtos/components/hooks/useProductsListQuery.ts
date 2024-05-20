@@ -31,11 +31,11 @@ export default function useProductsListQuery() {
       filterBuilder.like('description', query);
     }
 
-    const data = await getProductsList(
-      { page: pagination.page, size: pagination.pageSize },
-      filterBuilder.dto,
-      sort ? convertSortModelToString(sort) : 'id,desc',
-    );
+    const data = await getProductsList({
+      paginationDTO: { page: pagination.page, size: pagination.pageSize },
+      filterRequestDTO: filterBuilder.dto,
+      sort: sort ? convertSortModelToString(sort) : 'id,desc',
+    });
 
     setList(data);
     setLoading(false);

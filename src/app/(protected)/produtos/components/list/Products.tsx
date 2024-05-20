@@ -13,11 +13,6 @@ export default function Products() {
   const [open, setOpen] = useState<boolean>(false);
   const [product, setProduct] = useState<Product>();
 
-  const onSubmitForm = () => {
-    setOpen(false);
-    getList();
-  };
-
   return (
     <>
       <FooterPage
@@ -42,7 +37,7 @@ export default function Products() {
         />
       </div>
       <Filters openFilter={openFilter} setOpenFilter={setOpenFilter} status={status} setStatus={setStatus} />
-      <ProductForm open={open} setOpen={setOpen} onSubmitForm={onSubmitForm} product={product} />
+      <ProductForm open={open} setOpen={setOpen} onSubmitForm={() => getList()} product={product} />
     </>
   );
 }

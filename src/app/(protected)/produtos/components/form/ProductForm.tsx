@@ -2,22 +2,25 @@ import StandardForm from '@/components/FormTypes/StandardForm';
 import { FormButton } from '@/components/FormTypes/types/models';
 import { mutateProduct } from '@/core/products/services/products';
 import { EnumUnitProduct } from '@/core/products/types/enums';
-import { Product } from '@/core/products/types/models';
+import { Product, ProductSupplier } from '@/core/products/types/models';
+import { formatMoney } from '@/helpers/formatters';
+import { onChangeMoneyInput } from '@/helpers/general';
 import { successToast } from '@/helpers/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
+  Autocomplete,
+  CircularProgress,
   FormControl,
   FormControlLabel,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   Switch,
   TextField,
-  Typography,
 } from '@mui/material';
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, Fragment, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import useSuppliersListQuery from '../hooks/useSuppliersListQuery';
 import schemaValidation from './schemaValidation';
 
 type Props = {
@@ -28,24 +31,34 @@ type Props = {
 };
 
 export default function ProductForm({ open, setOpen, product, onSubmitForm }: Props) {
+  const { getMore, list: suppliersList, loading: suppliersLoading, search } = useSuppliersListQuery();
+  const [unitaryValue, setUnitaryValue] = useState<string>(formatMoney(0));
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<Product>({
     resolver: yupResolver(schemaValidation),
   });
 
   useEffect(() => {
-    if (product) {
-      reset(product);
-    } else {
-      reset({
-        id: undefined,
-        productSuppliers: undefined,
-        description: '',
-        active: true,
-        unit: 'UNIT',
-        unitaryValue: 0,
-      });
+    if (open) {
+      if (product) {
+        setUnitaryValue(formatMoney(product?.unitaryValue));
+        reset(product);
+      } else {
+        setUnitaryValue(formatMoney(0));
+        reset({
+          id: undefined,
+          productSuppliers: undefined,
+          description: '',
+          active: true,
+          unit: 'UNIT',
+          unitaryValue: 0,
+        });
+      }
+
+      search(undefined);
     }
-  }, [product, form]);
+  }, [product, form, open]);
 
   const {
     register,
@@ -54,9 +67,12 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
     watch,
     setValue,
     reset,
+    clearErrors,
   } = form;
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const onSubmit = async (data: Product) => {
     setLoading(true);
@@ -65,13 +81,10 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
       .then(() => {
         successToast('Produto salvo com sucesso!');
         setLoading(false);
+        handleClose();
         onSubmitForm?.();
       })
       .catch(() => setLoading(false));
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const buttons: FormButton[] = [
@@ -95,7 +108,12 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
 
   return (
     <FormProvider {...form}>
-      <StandardForm formButtons={buttons} formTitle={product ? `Editar: #${product.id}` : "Novo"} handleClose={handleClose} open={open}>
+      <StandardForm
+        formButtons={buttons}
+        formTitle={product ? `Produto #${product.id}` : 'Novo'}
+        handleClose={handleClose}
+        open={open}
+      >
         <div className="flex flex-col mt-4 gap-4 items-start">
           <FormControlLabel
             sx={{ margin: '0', marginBottom: '16px' }}
@@ -106,7 +124,7 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
                 onChange={() => setValue('active', !watch('active'))}
                 name="active"
                 color="primary"
-                id='product-active-switch'
+                id="product-active-switch"
               />
             }
             label="Ativo"
@@ -140,22 +158,75 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
             </Select>
           </FormControl>
           <TextField
-            {...register('unitaryValue')}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Typography>R$</Typography>
-                </InputAdornment>
-              ),
-            }}
             required
             fullWidth
             id="product-unitaryValue-text"
             label="Valor unitário"
             name="unitaryValue"
-            type="number"
             error={!!errors.unitaryValue}
             helperText={errors.unitaryValue?.message}
+            value={unitaryValue}
+            onChange={(e) =>
+              onChangeMoneyInput({
+                fieldName: 'unitaryValue',
+                clearErrors: clearErrors,
+                setInputValue: setUnitaryValue,
+                setValue: setValue,
+                target: e,
+              })
+            }
+          />
+          <Autocomplete
+            fullWidth
+            multiple
+            ListboxProps={{
+              style: { maxHeight: 300, overflow: 'auto' },
+              onScroll: (event: React.SyntheticEvent) => {
+                const listboxNode = event.currentTarget;
+                if (listboxNode.scrollTop + listboxNode.clientHeight === listboxNode.scrollHeight) {
+                  getMore(false);
+                }
+              },
+            }}
+            id="suppliers-autocomplete"
+            loading={suppliersLoading}
+            loadingText={'Carregando...'}
+            options={suppliersList?.content ?? []}
+            getOptionLabel={(option) => option?.name}
+            getOptionKey={(option) => option?.id ?? 0}
+            onChange={(_, value, reason) => {
+              if (reason === 'clear') {
+                getMore(false);
+              }
+
+              setValue(
+                'productSuppliers',
+                value.map((e) => new Object({ supplier: e }) as ProductSupplier),
+              );
+            }}
+            filterOptions={(options, state) => options}
+            isOptionEqualToValue={(option: any, value: any) => {
+              return option.id === value.id;
+            }}
+            defaultValue={watch('productSuppliers') ? watch('productSuppliers')?.map((e) => e.supplier) : []}
+            disableCloseOnSelect
+            noOptionsText="Nenhum resultado encontrado"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                onChange={(e) => search(e.target.value)}
+                label="Fornecedores"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <Fragment>
+                      {suppliersLoading && <CircularProgress color="primary" size={20} />}
+                      {params.InputProps.endAdornment}
+                    </Fragment>
+                  ),
+                }}
+              />
+            )}
           />
         </div>
       </StandardForm>

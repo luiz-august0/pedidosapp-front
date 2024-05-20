@@ -3,7 +3,7 @@ import DataGrid from '@/components/DataGrid/DataGrid';
 import { ProductPageResponseDTO } from '@/core/products/types/dtos';
 import { EnumUnitProduct } from '@/core/products/types/enums';
 import { Product } from '@/core/products/types/models';
-import { moneyFormat } from '@/helpers/formatters';
+import { formatMoney } from '@/helpers/formatters';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { Dispatch } from 'react';
 
@@ -42,7 +42,7 @@ export default function ProductsTable({ list, pagination, setPagination, loading
       field: 'unitaryValue',
       headerName: 'Valor Unitário',
       valueGetter: (params: number) => {
-        return moneyFormat(params);
+        return formatMoney(params);
       },
       flex: 1,
     },
@@ -71,6 +71,7 @@ export default function ProductsTable({ list, pagination, setPagination, loading
         setProduct(params.row);
         setOpen(true);
       }}
+      sortingMode='server'
     />
   );
 }
