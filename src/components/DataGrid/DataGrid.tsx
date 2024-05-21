@@ -31,6 +31,7 @@ export default function DataGrid({ onRowClick, loading, clientPagination, rows, 
         <Skeleton variant="rounded" sx={{ height: '50vh' }} animation="wave" />
       ) : (
         <MUIDataGrid
+          {...rest}
           sx={{
             '& .MuiDataGrid-columnHeader': {
               border: 'none',
@@ -90,7 +91,6 @@ export default function DataGrid({ onRowClick, loading, clientPagination, rows, 
           autoHeight
           onRowClick={onRowClick}
           localeText={ptBRDataGrid.components?.MuiDataGrid.defaultProps.localeText}
-          {...rest}
         />
       )}
     </Box>

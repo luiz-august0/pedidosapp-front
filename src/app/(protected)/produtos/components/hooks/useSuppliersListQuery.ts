@@ -9,8 +9,8 @@ export default function useSuppliersListQuery() {
   const [loading, setLoading] = useState<boolean>(false);
   const [query, setQuery] = useState<string>();
 
-  const getMore = async (searchable: boolean) => {
-    if (!list?.last || searchable) {
+  const getMore = async (reset: boolean) => {
+    if (!list?.last || reset) {
       setLoading(true);
 
       const filterBuilder = new FilterBuilder();
@@ -21,13 +21,13 @@ export default function useSuppliersListQuery() {
 
       const data = await getSuppliersList({
         paginationDTO: {
-          page: list && !searchable ? list?.pageable?.pageNumber + 1 : 0,
+          page: list && !reset ? list?.pageable?.pageNumber + 1 : 0,
           size: 10,
         },
         filterRequestDTO: filterBuilder.dto,
       });
 
-      setList(list && !searchable ? { ...data, content: [...list?.content, ...data?.content ]} : data);
+      setList(list && !reset ? { ...data, content: [...list?.content, ...data?.content ]} : data);
       setLoading(false);
     }
   };

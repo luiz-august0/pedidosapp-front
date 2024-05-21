@@ -8,7 +8,6 @@ import { onChangeMoneyInput } from '@/helpers/general';
 import { successToast } from '@/helpers/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Autocomplete,
   CircularProgress,
   FormControl,
   FormControlLabel,
@@ -22,6 +21,8 @@ import { Dispatch, Fragment, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useSuppliersListQuery from '../hooks/useSuppliersListQuery';
 import schemaValidation from './schemaValidation';
+import Autocomplete from '@/components/Autocomplete/Autocomplete';
+import { Supplier } from '@/core/suppliers/types/models';
 
 type Props = {
   open: boolean;
@@ -177,40 +178,31 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
             }
           />
           <Autocomplete
+            getMore={() => getMore(false)}
+            loading={suppliersLoading}
             fullWidth
             multiple
-            ListboxProps={{
-              style: { maxHeight: 300, overflow: 'auto' },
-              onScroll: (event: React.SyntheticEvent) => {
-                const listboxNode = event.currentTarget;
-                if (listboxNode.scrollTop + listboxNode.clientHeight === listboxNode.scrollHeight) {
-                  getMore(false);
-                }
-              },
-            }}
             id="suppliers-autocomplete"
-            loading={suppliersLoading}
-            loadingText={'Carregando...'}
             options={suppliersList?.content ?? []}
             getOptionLabel={(option) => option?.name}
             getOptionKey={(option) => option?.id ?? 0}
             onChange={(_, value, reason) => {
-              if (reason === 'clear') {
-                getMore(false);
+              const newSuppliers = value as Supplier[];
+
+              if (reason == "clear") {
+                search(undefined);
               }
 
               setValue(
                 'productSuppliers',
-                value.map((e) => new Object({ supplier: e }) as ProductSupplier),
+                newSuppliers.map((e) => new Object({ supplier: e }) as ProductSupplier),
               );
             }}
-            filterOptions={(options, state) => options}
+            filterOptions={(options) => options}
             isOptionEqualToValue={(option: any, value: any) => {
               return option.id === value.id;
             }}
             defaultValue={watch('productSuppliers') ? watch('productSuppliers')?.map((e) => e.supplier) : []}
-            disableCloseOnSelect
-            noOptionsText="Nenhum resultado encontrado"
             renderInput={(params) => (
               <TextField
                 {...params}
