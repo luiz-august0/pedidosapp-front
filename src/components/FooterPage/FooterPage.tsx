@@ -11,7 +11,7 @@ type Props = {
 
 export default function FooterPage({ titlePage, search, setOpenFilter, setOpenForm }: Props) {
   return (
-    <div className="flex max-md:flex-col justify-between max-md:items-center items-end sticky z-50 min-h-24 bg-gray-50 rounded-es-lg rounded-ee-lg top-0 p-2 drop-shadow-lg">
+    <div className="flex max-md:flex-col justify-between max-md:items-center items-end sticky z-40 min-h-24 bg-gray-50 rounded-es-lg rounded-ee-lg top-0 p-2 drop-shadow-lg">
       <div>
         <Typography fontSize={32}>{titlePage}</Typography>
       </div>
@@ -42,7 +42,7 @@ export default function FooterPage({ titlePage, search, setOpenFilter, setOpenFo
             color="primary"
             variant="contained"
             size="small"
-            onClick={() => setOpenForm(true)}
+            onClick={() => setOpenForm()}
           >
             Novo
           </Button>

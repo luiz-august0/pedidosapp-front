@@ -16,5 +16,10 @@ export const menuItems : ItemProps[] = [
     title: "Produtos",
     to: "/produtos",
     icon: 'Inventory'
+  },
+  {
+    title: "Fornecedores",
+    to: "/fornecedores",
+    icon: 'People'
   }
 ] 

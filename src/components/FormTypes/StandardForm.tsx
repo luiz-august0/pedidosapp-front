@@ -1,5 +1,14 @@
 import * as Icon from '@mui/icons-material';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogProps,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { ReactNode } from 'react';
 import { FormButton } from './types/models';
 
@@ -9,11 +18,11 @@ type Props = {
   handleClose: () => void;
   formButtons: FormButton[];
   children: ReactNode;
-};
+} & DialogProps;
 
-export default function StandardForm({ open, formTitle, handleClose, formButtons, children }: Props) {
+export default function StandardForm({ open, formTitle, handleClose, formButtons, children, ...rest }: Props) {
   return (
-    <Dialog open={open} fullWidth>
+    <Dialog {...rest} open={open} fullWidth>
       <DialogTitle>
         <div className="flex items-center justify-between">
           <Typography fontSize={28}>{formTitle}</Typography>

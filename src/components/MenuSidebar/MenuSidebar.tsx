@@ -137,11 +137,11 @@ export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
   };
 
   return (
-    <div className="flex md:h-screen md:fixed z-50">
+    <div className="flex md:h-screen fixed z-50">
       {matchWidth ? (
         <IconButton
           onClick={() => setIsCollapsed(!isCollapsed)}
-          style={{ padding: "2.5rem" }}
+          style={{ marginTop: "0.8rem" }}
         >
           <MUIcon.MenuOutlined color="primary" />
         </IconButton>

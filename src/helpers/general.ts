@@ -30,3 +30,5 @@ export function onChangeMoneyInput({
   setInputValue?.(formatMoney(val));
   clearErrors?.(fieldName);
 }
+
+export const getDigits = (value?: string): string => value?.replace(/\D/g, '') ?? '';
