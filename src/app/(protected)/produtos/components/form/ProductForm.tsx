@@ -1,8 +1,10 @@
+import Autocomplete from '@/components/Autocomplete/Autocomplete';
 import StandardForm from '@/components/FormTypes/StandardForm';
 import { FormButton } from '@/components/FormTypes/types/models';
 import { mutateProduct } from '@/core/products/services/products';
 import { EnumUnitProduct } from '@/core/products/types/enums';
-import { Product, ProductSupplier } from '@/core/products/types/models';
+import { Product } from '@/core/products/types/models';
+import { Supplier } from '@/core/suppliers/types/models';
 import { formatMoney } from '@/helpers/formatters';
 import { onChangeMoneyInput } from '@/helpers/general';
 import { successToast } from '@/helpers/toast';
@@ -21,8 +23,6 @@ import { Dispatch, Fragment, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useSuppliersListQuery from '../hooks/useSuppliersListQuery';
 import schemaValidation from './schemaValidation';
-import Autocomplete from '@/components/Autocomplete/Autocomplete';
-import { Supplier } from '@/core/suppliers/types/models';
 
 type Props = {
   open: boolean;
@@ -49,7 +49,7 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
         setUnitaryValue(formatMoney(0));
         reset({
           id: undefined,
-          productSuppliers: undefined,
+          suppliers: undefined,
           description: '',
           active: true,
           unit: 'UNIT',
@@ -186,23 +186,18 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
             options={suppliersList?.content ?? []}
             getOptionLabel={(option) => option?.name}
             getOptionKey={(option) => option?.id ?? 0}
-            onChange={(_, value, reason) => {
-              const newSuppliers = value as Supplier[];
-
-              if (reason == "clear") {
+            onChange={(_, value: Supplier[], reason) => {
+              if (reason == 'clear') {
                 search(undefined);
               }
 
-              setValue(
-                'productSuppliers',
-                newSuppliers.map((e) => new Object({ supplier: e }) as ProductSupplier),
-              );
+              setValue('suppliers', value);
             }}
             filterOptions={(options) => options}
             isOptionEqualToValue={(option: any, value: any) => {
               return option.id === value.id;
             }}
-            defaultValue={watch('productSuppliers') ? watch('productSuppliers')?.map((e) => e.supplier) : []}
+            defaultValue={watch('suppliers') ?? []}
             renderInput={(params) => (
               <TextField
                 {...params}

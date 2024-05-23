@@ -1,3 +1,5 @@
+import { Product } from '@/core/products/types/models';
+
 export interface Supplier {
   id?: number;
   name: string;
@@ -6,5 +8,6 @@ export interface Supplier {
   cnpj?: string;
   cpf?: string;
   contact?: string;
+  products?: Omit<Product, "suppliers">[];
   active?: boolean;
 }

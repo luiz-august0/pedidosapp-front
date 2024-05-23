@@ -1,14 +1,17 @@
+import Autocomplete from '@/components/Autocomplete/Autocomplete';
 import StandardForm from '@/components/FormTypes/StandardForm';
 import { FormButton } from '@/components/FormTypes/types/models';
 import { InputMaskField } from '@/components/InputMaskField/InputMaskField';
+import { Product } from '@/core/products/types/models';
 import { mutateSupplier } from '@/core/suppliers/services/suppliers';
 import { Supplier } from '@/core/suppliers/types/models';
 import { getDigits } from '@/helpers/general';
 import { successToast } from '@/helpers/toast';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FormControlLabel, Switch, TextField } from '@mui/material';
-import { Dispatch, useEffect, useState } from 'react';
+import { CircularProgress, FormControlLabel, Switch, TextField } from '@mui/material';
+import { Dispatch, Fragment, useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import useProductsListQuery from '../hooks/useProductsListQuery';
 import schemaValidation from './schemaValidation';
 
 type Props = {
@@ -19,6 +22,7 @@ type Props = {
 };
 
 export default function SupplierForm({ open, setOpen, supplier, onSubmitForm }: Props) {
+  const { getMore, list: productsList, loading: productsLoading, search } = useProductsListQuery();
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<Supplier>({
@@ -38,6 +42,7 @@ export default function SupplierForm({ open, setOpen, supplier, onSubmitForm }: 
           cpf: '',
           email: '',
           socialReason: '',
+          products: undefined,
           active: true,
         });
       }
@@ -51,7 +56,7 @@ export default function SupplierForm({ open, setOpen, supplier, onSubmitForm }: 
     watch,
     setValue,
     reset,
-    clearErrors
+    clearErrors,
   } = form;
 
   const handleClose = () => {
@@ -156,7 +161,7 @@ export default function SupplierForm({ open, setOpen, supplier, onSubmitForm }: 
               mask="99.999.999/9999-99"
               value={watch('cnpj')}
               onChange={(e) => {
-                clearErrors("cnpj");
+                clearErrors('cnpj');
                 setValue('cnpj', e.target.value);
               }}
             >
@@ -171,24 +176,82 @@ export default function SupplierForm({ open, setOpen, supplier, onSubmitForm }: 
                 />
               )}
             </InputMaskField>
-            <TextField
-              {...register('cpf')}
-              fullWidth
-              id="supplier-cpf-text"
-              label="CPF"
-              name="cpf"
-              error={!!errors.cpf}
-              helperText={errors.cpf?.message}
-            />
+            <InputMaskField
+              mask="999.999.999-99"
+              value={watch('cpf')}
+              onChange={(e) => {
+                clearErrors('cpf');
+                setValue('cpf', e.target.value);
+              }}
+            >
+              {() => (
+                <TextField
+                  fullWidth
+                  id="supplier-cpf-text"
+                  label="CPF"
+                  name="cpf"
+                  error={!!errors.cpf}
+                  helperText={errors.cpf?.message}
+                />
+              )}
+            </InputMaskField>
           </div>
-          <TextField
-            {...register('contact')}
+          <InputMaskField
+            mask="(99) 99999-9999"
+            value={watch('contact')}
+            onChange={(e) => {
+              clearErrors('contact');
+              setValue('contact', e.target.value);
+            }}
+          >
+            {() => (
+              <TextField
+                fullWidth
+                id="supplier-contact-text"
+                label="Contato"
+                name="contact"
+                error={!!errors.contact}
+                helperText={errors.contact?.message}
+              />
+            )}
+          </InputMaskField>
+          <Autocomplete
+            getMore={() => getMore(false)}
+            loading={productsLoading}
             fullWidth
-            id="supplier-contact-text"
-            label="Contato"
-            name="contact"
-            error={!!errors.contact}
-            helperText={errors.contact?.message}
+            multiple
+            id="products-autocomplete"
+            options={productsList?.content ?? []}
+            getOptionLabel={(option) => option?.description}
+            getOptionKey={(option) => option?.id ?? 0}
+            onChange={(_, value: Product[], reason) => {
+              if (reason == 'clear') {
+                search(undefined);
+              }
+
+              setValue('products', value);
+            }}
+            filterOptions={(options) => options}
+            isOptionEqualToValue={(option: any, value: any) => {
+              return option.id === value.id;
+            }}
+            defaultValue={watch('products') ?? []}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                onChange={(e) => search(e.target.value)}
+                label="Produtos"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <Fragment>
+                      {productsLoading && <CircularProgress color="primary" size={20} />}
+                      {params.InputProps.endAdornment}
+                    </Fragment>
+                  ),
+                }}
+              />
+            )}
           />
         </div>
       </StandardForm>
