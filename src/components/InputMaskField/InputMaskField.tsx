@@ -8,5 +8,5 @@ type InputMaskProps = {
 
 export function InputMaskField({ children, mask, ...props }: InputMaskProps) {
   const child = children as ReactNode;
-  return <InputMask mask={mask} {...props} children={child}/>;
+  return <InputMask mask={mask} {...props}>{child}</InputMask>;
 }
