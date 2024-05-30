@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={sans.className}>
         <NextSessionProvider>
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="bottom-left" />
           {children}
         </NextSessionProvider>
       </body>

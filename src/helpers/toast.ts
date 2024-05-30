@@ -29,10 +29,7 @@ const httpErrorToast = (error: HttpStandardError & AxiosError) => {
 
   if (error.response?.status == 401 || error.status == 401) {
     warningToast(message);
-  } else if (error.response?.status == 403) {
-    errorToast("Acesso não autorizado");
-  } 
-  else {
+  } else {
     errorToast(message);
   }
 };

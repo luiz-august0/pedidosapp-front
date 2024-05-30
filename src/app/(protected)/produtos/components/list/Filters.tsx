@@ -24,7 +24,7 @@ export default function Filters({ openFilter, setOpenFilter, status, setStatus }
           fullWidth
           value={status}
           exclusive
-          onChange={(_, value) => handleStatus(value)}
+          onChange={(_, value) => handleStatus(value??status)}
           color="primary"
         >
           <ToggleButton value={'ACTIVE'}>Ativo</ToggleButton>
