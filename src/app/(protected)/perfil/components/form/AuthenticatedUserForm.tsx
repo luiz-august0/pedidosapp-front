@@ -1,20 +1,23 @@
 import { mutateAuthenticatedUser } from "@/core/users/services/users";
 import { User } from "@/core/users/types/models";
+import { setMultipartStateFromFile } from "@/helpers/converters";
 import { successToast } from "@/helpers/toast";
+import { MultipartBean } from "@/shared/types/models";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Edit } from "@mui/icons-material";
 import { Avatar, Badge, Button, TextField } from "@mui/material";
+import { getCsrfToken, getSession } from "next-auth/react";
 import { SyntheticEvent, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import schemaValidation from "./schemaValidation";
 
-export default function AuthenticatedUserForm({ user }: { user: User }) {
+export default function AuthenticatedUserForm({ user }: { user?: User }) {
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<User>({
     defaultValues: {
-      login: user.login,
-      photo: user.photo,
+      login: user?.login,
+      photoMultipart: user?.photoMultipart,
     },
     resolver: yupResolver(schemaValidation),
   });
@@ -25,32 +28,42 @@ export default function AuthenticatedUserForm({ user }: { user: User }) {
     formState: { errors },
     watch,
     setValue,
-    reset,
-    clearErrors,
   } = form;
+
+  const updateSessionUser = async (user: User) => {
+    const csrfToken = await getCsrfToken();
+
+    await getSession({
+      req: {
+        body: {
+          csrfToken,
+          data: { user: user },
+        },
+      },
+    });
+  };
 
   const onSubmit = async (data: User) => {
     setLoading(true);
 
     await mutateAuthenticatedUser(data)
-      .then(() => {
+      .then((res: User) => {
+        updateSessionUser(res);
         successToast("Usuário alterado com sucesso!");
         setLoading(false);
       })
       .catch(() => setLoading(false));
   };
 
-  const handleUploadClick = (event: SyntheticEvent) => {
-    var file = event.target?.files[0];
-    const reader = new FileReader();
+  const handlePhotoChange = (event: SyntheticEvent) => {
+    const input = event.target as HTMLInputElement;
+
+    const file = input.files?.[0];
+
     if (file) {
-      reader.readAsDataURL(file);
-      reader.onloadend = function () {
-        setValue("photoMultipart", {
-          file: reader.result as string,
-          filename: file.name,
-        });
-      };
+      setMultipartStateFromFile(file, (multipart: MultipartBean) => {
+        setValue("photoMultipart", multipart);
+      });
     }
   };
 
@@ -64,7 +77,7 @@ export default function AuthenticatedUserForm({ user }: { user: User }) {
             id="photo-input-file"
             name="photo"
             type="file"
-            onChange={handleUploadClick}
+            onChange={handlePhotoChange}
           />
           <label htmlFor="photo-input-file">
             <Badge
@@ -74,13 +87,12 @@ export default function AuthenticatedUserForm({ user }: { user: User }) {
               sx={{ cursor: "pointer" }}
             >
               <Avatar
-                src={watch("photoMultipart")?.file ?? watch("photo")}
+                src={watch("photoMultipart")?.file}
                 sx={{ width: 150, height: 150 }}
               />
             </Badge>
           </label>
         </div>
-
         <TextField
           {...register("login")}
           required
