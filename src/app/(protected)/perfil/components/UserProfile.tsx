@@ -40,7 +40,7 @@ export default function UserProfile() {
     <>
       <FooterPage titlePage="Perfil" />
       <div className="flex justify-center">
-        <div className="w-1/2 p-3 mt-5 rounded-lg bg-gray-50 min-h-96">
+        <div className="w-1/2 p-3 mt-5 rounded-lg bg-gray-50">
           {loadingUser || !user ? (
             <div className="flex w-full h-full justify-center items-center">
               <CircularProgress />
