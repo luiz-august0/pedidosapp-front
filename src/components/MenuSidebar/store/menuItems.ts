@@ -31,5 +31,10 @@ export const menuItems : ItemProps[] = [
     title: "Funcionários",
     to: "/funcionarios",
     icon: 'Groups'
+  },
+  {
+    title: "Usuários",
+    to: "/usuarios",
+    icon: 'SupervisedUserCircle'
   }
 ] 

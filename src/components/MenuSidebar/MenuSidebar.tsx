@@ -9,6 +9,7 @@ import { ItemProps, menuItems } from './store/menuItems';
 type Props = {
   isCollapsed: boolean;
   setIsCollapsed: Dispatch<React.SetStateAction<boolean>>;
+  setOpenUserModal: Dispatch<React.SetStateAction<boolean>>;
 };
 
 type SidebarProps = Props & {
@@ -34,7 +35,7 @@ const Item = ({ title, to, icon, setIsCollapsed }: ItemPropsRender) => {
   );
 };
 
-const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, logout, setOpenUserModal }: SidebarProps) => {
   const router = useRouter();
   const { data } = useSession();
 
@@ -100,7 +101,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
             icon={<Avatar src={data?.user?.photo} />}
             onClick={() => {
               setIsCollapsed(true);
-              router.push('/perfil');
+              setOpenUserModal(true);
             }}
           >
             <Typography fontWeight={'bold'}>{data?.user?.login}</Typography>
@@ -114,7 +115,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, logout }: SidebarProps) => {
   );
 };
 
-export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
+export default function MenuSidebar({ isCollapsed, setIsCollapsed, setOpenUserModal }: Props) {
   const router = useRouter();
   const matchWidth = useMediaQuery('(max-width:768px)');
 
@@ -130,10 +131,20 @@ export default function MenuSidebar({ isCollapsed, setIsCollapsed }: Props) {
           <MUIcon.MenuOutlined color="primary" />
         </IconButton>
       ) : (
-        <Sidebar isCollapsed={true} setIsCollapsed={setIsCollapsed} logout={logout} />
+        <Sidebar
+          setOpenUserModal={setOpenUserModal}
+          isCollapsed={true}
+          setIsCollapsed={setIsCollapsed}
+          logout={logout}
+        />
       )}
       <Drawer open={!isCollapsed} onClose={() => setIsCollapsed(true)}>
-        <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} logout={logout} />
+        <Sidebar
+          setOpenUserModal={setOpenUserModal}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          logout={logout}
+        />
       </Drawer>
     </div>
   );

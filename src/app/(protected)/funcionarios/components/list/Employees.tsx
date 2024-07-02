@@ -1,10 +1,10 @@
 import FooterPage from '@/components/FooterPage/FooterPage';
+import { Employee } from '@/core/employees/types/models';
 import { useState } from 'react';
 import EmployeeForm from '../form/EmployeeForm';
 import useEmployeesListQuery from '../hooks/useEmployeesListQuery';
-import Filters from './Filters';
 import EmployeesTable from './EmployeesTable';
-import { Employee } from '@/core/employees/types/models';
+import Filters from './Filters';
 
 export default function Employees() {
   const { getList, list, pagination, setPagination, loading, sort, setSort, status, setStatus, search } =
@@ -37,7 +37,7 @@ export default function Employees() {
         />
       </div>
       <Filters openFilter={openFilter} setOpenFilter={setOpenFilter} status={status} setStatus={setStatus} />
-      <EmployeeForm open={open} setOpen={setOpen} onSubmitForm={() => getList()} employee={employee} />
+      {open && <EmployeeForm open={open} setOpen={setOpen} onSubmitForm={() => getList()} employee={employee} />}
     </>
   );
 }

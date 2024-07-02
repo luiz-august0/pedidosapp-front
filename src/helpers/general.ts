@@ -1,3 +1,4 @@
+import { MultipartBean } from '@/shared/types/models';
 import { ChangeEvent, Dispatch } from 'react';
 import { formatMoney, unmaskInputMoney } from './formatters';
 
@@ -32,3 +33,19 @@ export function onChangeMoneyInput({
 }
 
 export const getDigits = (value?: string): string => value?.replace(/\D/g, '') ?? '';
+
+export const setMultipartStateFromFile = (file: File, setFunction: (multipart: MultipartBean) => void) => {
+  const reader = new FileReader();
+
+  reader.readAsDataURL(file);
+  reader.onloadend = function () {
+    setFunction({
+      file: reader.result as string,
+      filename: file.name,
+    });
+  };
+};
+
+export const getFilenameFromUrl = (url: string) => {
+  return url.substring(url.lastIndexOf('/') + 1, url.length);
+};

@@ -1,20 +1,19 @@
-import { MultipartBean } from "@/shared/types/models";
-import { GridSortItem, GridSortModel } from "@mui/x-data-grid";
+import { GridSortItem, GridSortModel } from '@mui/x-data-grid';
 
 export const convertSortModelToString = (sortModel?: GridSortModel): string => {
   if (sortModel && sortModel?.length > 0) {
     let sortedField: GridSortItem = sortModel[0];
 
-    if (!sortedField.field || sortedField.field == "") return "";
+    if (!sortedField.field || sortedField.field == '') return '';
 
-    return sortedField.field + "," + sortedField.sort;
+    return sortedField.field + ',' + sortedField.sort;
   }
 
-  return "";
+  return '';
 };
 
 export const convertUrlToBlob = async (url: string) => {
-  const response = await fetch(url, { method: "GET" });
+  const response = await fetch(url, { method: 'GET' });
 
   return await response.blob();
 };
@@ -35,19 +34,4 @@ export const convertUrlToReadeableFile = async (url: string) => {
       reject(error);
     };
   });
-};
-
-export const setMultipartStateFromFile = (
-  file: File,
-  setFunction: (multipart: MultipartBean) => void
-) => {
-  const reader = new FileReader();
-
-  reader.readAsDataURL(file);
-  reader.onloadend = function () {
-    setFunction({
-      file: reader.result as string,
-      filename: file.name,
-    });
-  };
 };

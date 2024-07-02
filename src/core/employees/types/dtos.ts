@@ -1,4 +1,4 @@
-import { PagedList } from "@/shared/types/models";
+import { MultipartBean, PagedList } from "@/shared/types/models";
 import { Employee } from "./models";
 
 export type EmployeePageResponseDTO = PagedList<Employee>;
@@ -9,4 +9,5 @@ export type EmployeeRequestDTO = Pick<
 > & {
   login: string;
   password?: string;
+  photo?: MultipartBean;
 };

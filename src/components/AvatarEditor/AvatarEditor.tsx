@@ -1,10 +1,12 @@
+import { setMultipartStateFromFile } from '@/helpers/general';
+import { MultipartBean } from '@/shared/types/models';
 import { Edit } from '@mui/icons-material';
 import { Avatar, Box, IconButton, Menu, MenuItem } from '@mui/material';
 import { SyntheticEvent, useRef, useState } from 'react';
 
 type Props = {
   imageUrl?: string;
-  onChange: (event: SyntheticEvent) => void;
+  onChange: (multipart: MultipartBean) => void;
   onRemove: () => void;
   width?: number;
   height?: number;
@@ -23,6 +25,18 @@ export default function AvatarEditor({ imageUrl, onChange, onRemove, width, heig
     setAnchorEl(null);
   };
 
+  const handleChange = (event: SyntheticEvent) => {
+    const input = event.target as HTMLInputElement;
+
+    const file = input.files?.[0];
+
+    if (file) {
+      setMultipartStateFromFile(file, (multipart: MultipartBean) => {
+        onChange(multipart);
+      });
+    }
+  };
+
   return (
     <>
       <input
@@ -32,7 +46,7 @@ export default function AvatarEditor({ imageUrl, onChange, onRemove, width, heig
         hidden
         ref={fileInputRef}
         onChange={(e) => {
-          onChange(e);
+          handleChange(e);
           handleClose();
         }}
       />

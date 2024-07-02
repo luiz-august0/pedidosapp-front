@@ -1,69 +1,58 @@
 import ActiveChip from '@/components/Chip/ActiveChip';
 import DataGrid from '@/components/DataGrid/DataGrid';
-import { EmployeePageResponseDTO } from '@/core/employees/types/dtos';
-import { Employee } from '@/core/employees/types/models';
-import { getDigits } from '@/helpers/general';
-import { Avatar } from '@mui/material';
+import { UserPageResponseDTO } from '@/core/users/types/dtos';
+import { User } from '@/core/users/types/models';
+import { Avatar, Chip } from '@mui/material';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
-import { maskBr } from 'js-brasil';
 import { Dispatch } from 'react';
 
 type Props = {
-  list?: EmployeePageResponseDTO;
+  list?: UserPageResponseDTO;
   pagination: GridPaginationModel;
   setPagination: Dispatch<React.SetStateAction<GridPaginationModel>>;
   loading: boolean;
   sort?: GridSortModel;
   setSort?: Dispatch<React.SetStateAction<GridSortModel | undefined>>;
-  setEmployee: Dispatch<React.SetStateAction<Employee | undefined>>;
+  setUser: Dispatch<React.SetStateAction<User | undefined>>;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function EmployeesTable({
+export default function UsersTable({
   list,
   pagination,
   setPagination,
   loading,
   sort,
   setSort,
-  setEmployee,
+  setUser,
   setOpen,
 }: Props) {
-  const columns: GridColDef<Employee>[] = [
+  const columns: GridColDef<User>[] = [
     {
       field: 'id',
       headerName: 'Cód.',
       flex: 1,
     },
     {
-      field: 'name',
-      headerName: 'Funcionário',
+      field: 'login',
+      headerName: 'Usuário',
       flex: 1,
       renderCell(params) {
         return (
           <div className="flex flex-row gap-2 items-center">
-            <Avatar src={params.row.user.photo} />
+            <Avatar src={params.row.photo} />
             {params.value}
           </div>
         );
       },
     },
     {
-      field: 'email',
-      headerName: 'E-mail',
+      field: 'role',
+      headerName: 'Tipo',
+      renderCell(params) {
+        return <Chip label={params.value == 'ADMIN' ? 'Administrador' : 'Funcionário'} sx={{ fontWeight: 'bold' }} />;
+      },
       flex: 1,
-    },
-    {
-      field: 'cpf',
-      headerName: 'CPF',
-      flex: 1,
-      valueGetter: (params) => maskBr.cpf(params),
-    },
-    {
-      field: 'contact',
-      headerName: 'Contato',
-      flex: 1,
-      valueGetter: (params) => (getDigits(params).length > 10 ? maskBr.celular(params) : maskBr.telefone(params)),
     },
     {
       field: 'active',
@@ -87,7 +76,7 @@ export default function EmployeesTable({
       sortModel={sort}
       onSortModelChange={setSort}
       onRowClick={(params) => {
-        setEmployee(params.row);
+        setUser(params.row);
         setOpen(true);
       }}
       sortingMode="server"
