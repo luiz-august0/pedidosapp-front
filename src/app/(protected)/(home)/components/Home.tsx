@@ -1,11 +1,10 @@
-import { useSession } from "next-auth/react";
+import FooterPage from '@/components/FooterPage/FooterPage';
 
 export default function Home() {
-  const { data: session } = useSession();
-  
   return (
-    <div>
-      <h2>Ola, {session?.user?.login}</h2>
-    </div>
+    <>
+      <FooterPage titlePage="Dashboard" />
+      <div className="mt-10 px-3"></div>
+    </>
   );
 }

@@ -34,3 +34,8 @@ export interface PagedList<T> {
   numberOfElements: number;
   empty: boolean;
 }
+
+export interface MultipartBean {
+  file: string;
+  filename: string;
+}

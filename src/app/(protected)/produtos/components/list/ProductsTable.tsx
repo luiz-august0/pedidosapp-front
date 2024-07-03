@@ -3,7 +3,7 @@ import DataGrid from '@/components/DataGrid/DataGrid';
 import { ProductPageResponseDTO } from '@/core/products/types/dtos';
 import { EnumUnitProduct } from '@/core/products/types/enums';
 import { Product } from '@/core/products/types/models';
-import { moneyFormat } from '@/helpers/formatters';
+import { formatMoney } from '@/helpers/formatters';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { Dispatch } from 'react';
 
@@ -14,9 +14,11 @@ type Props = {
   loading: boolean;
   sort?: GridSortModel;
   setSort?: Dispatch<React.SetStateAction<GridSortModel | undefined>>;
+  setProduct: Dispatch<React.SetStateAction<Product | undefined>>;
+  setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ProductsTable({ list, pagination, setPagination, loading, sort, setSort }: Props) {
+export default function ProductsTable({ list, pagination, setPagination, loading, sort, setSort, setProduct, setOpen }: Props) {
   const columns: GridColDef<Product>[] = [
     {
       field: 'id',
@@ -31,8 +33,8 @@ export default function ProductsTable({ list, pagination, setPagination, loading
     {
       field: 'unit',
       headerName: 'Unidade',
-      valueGetter: (params: string) => {
-        return EnumUnitProduct[params];
+      valueGetter: (params: 'UNIT' | 'KILOGRAM' | 'PACKAGE') => {
+        return EnumUnitProduct[params].value;
       },
       flex: 1,
     },
@@ -40,7 +42,7 @@ export default function ProductsTable({ list, pagination, setPagination, loading
       field: 'unitaryValue',
       headerName: 'Valor Unitário',
       valueGetter: (params: number) => {
-        return moneyFormat(params);
+        return formatMoney(params);
       },
       flex: 1,
     },
@@ -65,6 +67,11 @@ export default function ProductsTable({ list, pagination, setPagination, loading
       pageSizeOptions={(list?.totalElements ?? 0) > 10 ? [10, 25, 50] : [list?.totalElements ?? 0]}
       sortModel={sort}
       onSortModelChange={setSort}
+      onRowClick={(params) => {
+        setProduct(params.row);
+        setOpen(true);
+      }}
+      sortingMode='server'
     />
   );
 }

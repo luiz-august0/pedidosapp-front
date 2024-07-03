@@ -16,5 +16,25 @@ export const menuItems : ItemProps[] = [
     title: "Produtos",
     to: "/produtos",
     icon: 'Inventory'
+  },
+  {
+    title: "Fornecedores",
+    to: "/fornecedores",
+    icon: 'People'
+  },
+  {
+    title: "Clientes",
+    to: "/clientes",
+    icon: 'PeopleOutline'
+  },
+  {
+    title: "Funcionários",
+    to: "/funcionarios",
+    icon: 'Groups'
+  },
+  {
+    title: "Usuários",
+    to: "/usuarios",
+    icon: 'SupervisedUserCircle'
   }
 ] 
