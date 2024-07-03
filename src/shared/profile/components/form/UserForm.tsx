@@ -149,38 +149,42 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
                 </Button>
               </div>
             )}
-            <div className="flex flex-row justify-between items-center gap-10">
-              <div className="flex flex-row">
-                <AvatarEditor
-                  imageUrl={watch('photoMultipart')?.file}
-                  onChange={(value) => setValue('photoMultipart', value)}
-                  onRemove={() => setValue('photoMultipart', undefined)}
-                />
-              </div>
-              <div className="flex flex-col gap-4 w-full">
-                <TextField
-                  {...register('login')}
-                  required
-                  fullWidth
-                  id="user-login-text"
-                  label="Login"
-                  name="login"
-                  error={!!errors.login}
-                  helperText={errors.login?.message}
-                />
-                {updatePassword && (
-                  <TextField
-                    {...register('password')}
-                    fullWidth
-                    id="user-password-text"
-                    label="Senha"
-                    name="password"
-                    type="password"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
+            <div className="flex flex-col gap-4">
+              <FormControlLabel
+                sx={{ margin: '0', marginBottom: '16px', justifyContent: 'center', width: '100%' }}
+                value="top"
+                control={
+                  <AvatarEditor
+                    imageUrl={watch('photoMultipart')?.file}
+                    onChange={(value) => setValue('photoMultipart', value)}
+                    onRemove={() => setValue('photoMultipart', undefined)}
                   />
-                )}
-              </div>
+                }
+                label="Foto de perfil"
+                labelPlacement="top"
+              />
+              <TextField
+                {...register('login')}
+                required
+                fullWidth
+                id="user-login-text"
+                label="Login"
+                name="login"
+                error={!!errors.login}
+                helperText={errors.login?.message}
+              />
+              {updatePassword && (
+                <TextField
+                  {...register('password')}
+                  fullWidth
+                  id="user-password-text"
+                  label="Senha"
+                  name="password"
+                  type="password"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                />
+              )}
             </div>
           </div>
         )}

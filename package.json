@@ -16,6 +16,7 @@
     "@mui/material": "^5.15.16",
     "@mui/x-data-grid": "^7.3.2",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.11",
     "js-brasil": "^2.6.1",
     "next": "14.2.3",
     "next-auth": "^4.24.7",

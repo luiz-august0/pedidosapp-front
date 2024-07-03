@@ -36,5 +36,10 @@ export const menuItems : ItemProps[] = [
     title: "Usuários",
     to: "/usuarios",
     icon: 'SupervisedUserCircle'
+  },
+  {
+    title: "Pedidos de venda",
+    to: "/pedidos-venda",
+    icon: 'Sell'
   }
 ] 
