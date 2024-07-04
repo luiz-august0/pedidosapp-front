@@ -1,8 +1,10 @@
-import ActiveChip from '@/components/Chip/ActiveChip';
+import Chip from '@/components/Chip/Chip';
 import DataGrid from '@/components/DataGrid/DataGrid';
 import { UserPageResponseDTO } from '@/core/users/types/dtos';
+import { EnumUserRole } from '@/core/users/types/enums';
 import { User } from '@/core/users/types/models';
-import { Avatar, Chip } from '@mui/material';
+import { EnumDefaultStatus } from '@/shared/types/enums';
+import { Avatar } from '@mui/material';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { Dispatch } from 'react';
 
@@ -50,7 +52,7 @@ export default function UsersTable({
       field: 'role',
       headerName: 'Tipo',
       renderCell(params) {
-        return <Chip label={params.value == 'ADMIN' ? 'Administrador' : 'Funcionário'} sx={{ fontWeight: 'bold' }} />;
+        return <Chip enumParams={EnumUserRole[params.value]} />;
       },
       flex: 1,
     },
@@ -58,7 +60,7 @@ export default function UsersTable({
       field: 'active',
       headerName: 'Ativo',
       renderCell(params) {
-        return <ActiveChip active={params.value} />;
+        return <Chip enumParams={EnumDefaultStatus[params.value]} />;
       },
       flex: 1,
     },

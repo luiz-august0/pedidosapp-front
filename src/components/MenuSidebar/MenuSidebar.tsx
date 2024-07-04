@@ -36,7 +36,6 @@ const Item = ({ title, to, icon, setIsCollapsed }: ItemPropsRender) => {
 };
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, logout, setOpenUserModal }: SidebarProps) => {
-  const router = useRouter();
   const { data } = useSession();
 
   return (

@@ -1,5 +1,7 @@
+import Chip from '@/components/Chip/Chip';
 import DataGrid from '@/components/DataGrid/DataGrid';
 import { OrderPageResponseDTO } from '@/core/orders/types/dtos';
+import { EnumOrderStatus } from '@/core/orders/types/enums';
 import { Order } from '@/core/orders/types/models';
 import { formatMoney } from '@/helpers/formatters';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
@@ -68,15 +70,18 @@ export default function OrdersTable({ list, pagination, setPagination, loading, 
     {
       field: 'status',
       headerName: 'Status',
+      renderCell(params) {
+        return <Chip enumParams={EnumOrderStatus[params.value]} />;
+      },
       flex: 1,
     },
     {
       field: 'inclusionDate',
       headerName: 'Data',
-      flex: 1,
       valueGetter: (params: string) => {
         return dayjs(params).format('DD/MM/YYYY');
       },
+      flex: 1,
     },
   ];
 

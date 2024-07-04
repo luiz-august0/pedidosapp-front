@@ -1,17 +1,34 @@
 import FooterPage from '@/components/FooterPage/FooterPage';
-import { useState } from 'react';
+import { getCustomer } from '@/core/customers/services/customers';
+import { Customer } from '@/core/customers/types/models';
+import { useEffect, useState } from 'react';
 import CustomerForm from '../form/CustomerForm';
 import useCustomersListQuery from '../hooks/useCustomersListQuery';
-import Filters from './Filters';
 import CustomersTable from './CustomersTable';
-import { Customer } from '@/core/customers/types/models';
+import Filters from './Filters';
 
-export default function Customers() {
+export default function Customers({ id }: { id?: number }) {
   const { getList, list, pagination, setPagination, loading, sort, setSort, status, setStatus, search } =
     useCustomersListQuery();
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [customer, setCustomer] = useState<Customer>();
+  const [loadingCustomer, setLoadingCustomer] = useState<boolean>(false);
+
+  const loadCustomer = async () => {
+    if (id) {
+      setLoadingCustomer(true);
+
+      setCustomer(await getCustomer({ id }));
+      setOpen(true);
+
+      setLoadingCustomer(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCustomer();
+  }, [id]);
 
   return (
     <>

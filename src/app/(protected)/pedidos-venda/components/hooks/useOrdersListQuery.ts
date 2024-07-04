@@ -15,7 +15,7 @@ export default function useOrdersListQuery() {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [sort, setSort] = useState<GridSortModel>();
-  const [status, setStatus] = useState<EnumDefaultStatus>('ALL');
+  const [status, setStatus] = useState<keyof typeof EnumDefaultStatus>('all');
   const [query, setQuery] = useState<string>();
 
   const getList = async () => {
@@ -23,8 +23,8 @@ export default function useOrdersListQuery() {
 
     const filterBuilder = new FilterBuilder();
 
-    if (status !== 'ALL') {
-      filterBuilder.equals('active', status == 'ACTIVE');
+    if (status !== 'all') {
+      filterBuilder.equals('active', status == 'true');
     }
 
     if (query) {

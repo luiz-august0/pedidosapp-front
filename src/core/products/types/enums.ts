@@ -1,9 +1,7 @@
-type EnumUnitProductType = {
-  [key: string]: { value: string };
-};
+import { EnumDefaultType } from '@/shared/types/enums';
 
-export const EnumUnitProduct: EnumUnitProductType = {
-  UNIT: { value: 'Unidade' },
-  KILOGRAM: { value: 'Kilograma' },
-  PACKAGE: { value: 'Pacote' },
+export const EnumUnitProduct: EnumDefaultType = {
+  UNIT: { label: 'Unidade' },
+  KILOGRAM: { label: 'Kilograma' },
+  PACKAGE: { label: 'Pacote' },
 };

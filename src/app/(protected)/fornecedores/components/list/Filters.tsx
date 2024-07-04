@@ -1,5 +1,4 @@
 import FilterDrawer from '@/components/FilterDrawer/FilterDrawer';
-import { EnumDefaultStatus } from '@/shared/types/enums';
 import { InputLabel, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Dispatch } from 'react';
 
@@ -27,9 +26,9 @@ export default function Filters({ openFilter, setOpenFilter, status, setStatus }
           onChange={(_, value) => handleStatus(value??status)}
           color="primary"
         >
-          <ToggleButton value={'ACTIVE'}>Ativo</ToggleButton>
-          <ToggleButton value={'INACTIVE'}>Inativo</ToggleButton>
-          <ToggleButton value={'ALL'}>Todos</ToggleButton>
+          <ToggleButton value={'true'}>Ativo</ToggleButton>
+          <ToggleButton value={'false'}>Inativo</ToggleButton>
+          <ToggleButton value={'all'}>Todos</ToggleButton>
         </ToggleButtonGroup>
       </div>
     </FilterDrawer>

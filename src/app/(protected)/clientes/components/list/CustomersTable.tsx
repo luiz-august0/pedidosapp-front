@@ -1,8 +1,9 @@
-import ActiveChip from '@/components/Chip/ActiveChip';
+import Chip from '@/components/Chip/Chip';
 import DataGrid from '@/components/DataGrid/DataGrid';
 import { CustomerPageResponseDTO } from '@/core/customers/types/dtos';
 import { Customer } from '@/core/customers/types/models';
 import { getDigits } from '@/helpers/general';
+import { EnumDefaultStatus } from '@/shared/types/enums';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { maskBr } from 'js-brasil';
 import { Dispatch } from 'react';
@@ -18,7 +19,16 @@ type Props = {
   setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function CustomersTable({ list, pagination, setPagination, loading, sort, setSort, setCustomer, setOpen }: Props) {
+export default function CustomersTable({
+  list,
+  pagination,
+  setPagination,
+  loading,
+  sort,
+  setSort,
+  setCustomer,
+  setOpen,
+}: Props) {
   const columns: GridColDef<Customer>[] = [
     {
       field: 'id',
@@ -39,25 +49,25 @@ export default function CustomersTable({ list, pagination, setPagination, loadin
       field: 'cnpj',
       headerName: 'CNPJ',
       flex: 1,
-      valueGetter: (params) => maskBr.cnpj(params)
+      valueGetter: (params) => maskBr.cnpj(params),
     },
     {
       field: 'cpf',
       headerName: 'CPF',
       flex: 1,
-      valueGetter: (params) => maskBr.cpf(params)
+      valueGetter: (params) => maskBr.cpf(params),
     },
     {
       field: 'contact',
       headerName: 'Contato',
       flex: 1,
-      valueGetter: (params) => getDigits(params).length > 10 ? maskBr.celular(params) : maskBr.telefone(params)
+      valueGetter: (params) => (getDigits(params).length > 10 ? maskBr.celular(params) : maskBr.telefone(params)),
     },
     {
       field: 'active',
       headerName: 'Ativo',
       renderCell(params) {
-        return <ActiveChip active={params.value} />;
+        return <Chip enumParams={EnumDefaultStatus[params.value]} />;
       },
       flex: 1,
     },
@@ -78,7 +88,7 @@ export default function CustomersTable({ list, pagination, setPagination, loadin
         setCustomer(params.row);
         setOpen(true);
       }}
-      sortingMode='server'
+      sortingMode="server"
     />
   );
 }

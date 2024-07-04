@@ -1,8 +1,9 @@
-import ActiveChip from '@/components/Chip/ActiveChip';
+import Chip from '@/components/Chip/Chip';
 import DataGrid from '@/components/DataGrid/DataGrid';
 import { EmployeePageResponseDTO } from '@/core/employees/types/dtos';
 import { Employee } from '@/core/employees/types/models';
 import { getDigits } from '@/helpers/general';
+import { EnumDefaultStatus } from '@/shared/types/enums';
 import { Avatar } from '@mui/material';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { maskBr } from 'js-brasil';
@@ -69,7 +70,7 @@ export default function EmployeesTable({
       field: 'active',
       headerName: 'Ativo',
       renderCell(params) {
-        return <ActiveChip active={params.value} />;
+        return <Chip enumParams={EnumDefaultStatus[params.value]} />;
       },
       flex: 1,
     },

@@ -1,9 +1,10 @@
-import ActiveChip from '@/components/Chip/ActiveChip';
+import Chip from '@/components/Chip/Chip';
 import DataGrid from '@/components/DataGrid/DataGrid';
 import { ProductPageResponseDTO } from '@/core/products/types/dtos';
 import { EnumUnitProduct } from '@/core/products/types/enums';
 import { Product } from '@/core/products/types/models';
 import { formatMoney } from '@/helpers/formatters';
+import { EnumDefaultStatus } from '@/shared/types/enums';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { Dispatch } from 'react';
 
@@ -18,7 +19,16 @@ type Props = {
   setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ProductsTable({ list, pagination, setPagination, loading, sort, setSort, setProduct, setOpen }: Props) {
+export default function ProductsTable({
+  list,
+  pagination,
+  setPagination,
+  loading,
+  sort,
+  setSort,
+  setProduct,
+  setOpen,
+}: Props) {
   const columns: GridColDef<Product>[] = [
     {
       field: 'id',
@@ -33,8 +43,8 @@ export default function ProductsTable({ list, pagination, setPagination, loading
     {
       field: 'unit',
       headerName: 'Unidade',
-      valueGetter: (params: 'UNIT' | 'KILOGRAM' | 'PACKAGE') => {
-        return EnumUnitProduct[params].value;
+      valueGetter: (params) => {
+        return EnumUnitProduct[params].label;
       },
       flex: 1,
     },
@@ -50,7 +60,7 @@ export default function ProductsTable({ list, pagination, setPagination, loading
       field: 'active',
       headerName: 'Ativo',
       renderCell(params) {
-        return <ActiveChip active={params.value} />;
+        return <Chip enumParams={EnumDefaultStatus[params.value]} />;
       },
       flex: 1,
     },
@@ -71,7 +81,7 @@ export default function ProductsTable({ list, pagination, setPagination, loading
         setProduct(params.row);
         setOpen(true);
       }}
-      sortingMode='server'
+      sortingMode="server"
     />
   );
 }

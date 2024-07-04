@@ -6,12 +6,12 @@ import { Dispatch } from 'react';
 type Props = {
   openFilter: boolean;
   setOpenFilter: Dispatch<React.SetStateAction<boolean>>;
-  status: EnumDefaultStatus;
-  setStatus: Dispatch<React.SetStateAction<'ACTIVE' | 'INACTIVE' | 'ALL'>>;
+  status: keyof typeof EnumDefaultStatus;
+  setStatus: Dispatch<React.SetStateAction<keyof typeof EnumDefaultStatus>>;
 };
 
 export default function Filters({ openFilter, setOpenFilter, status, setStatus }: Props) {
-  const handleStatus = (statusValue: EnumDefaultStatus) => {
+  const handleStatus = (statusValue: keyof typeof EnumDefaultStatus) => {
     setStatus(statusValue);
     setOpenFilter(false);
   };
@@ -27,9 +27,9 @@ export default function Filters({ openFilter, setOpenFilter, status, setStatus }
           onChange={(_, value) => handleStatus(value??status)}
           color="primary"
         >
-          <ToggleButton value={'ACTIVE'}>Ativo</ToggleButton>
-          <ToggleButton value={'INACTIVE'}>Inativo</ToggleButton>
-          <ToggleButton value={'ALL'}>Todos</ToggleButton>
+          <ToggleButton value={'true'}>Ativo</ToggleButton>
+          <ToggleButton value={'false'}>Inativo</ToggleButton>
+          <ToggleButton value={'all'}>Todos</ToggleButton>
         </ToggleButtonGroup>
       </div>
     </FilterDrawer>

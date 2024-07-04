@@ -15,6 +15,16 @@ export async function getCustomersList({ paginationDTO, filterRequestDTO, sort }
   }
 }
 
+export async function getCustomer({ id }: { id: number }) {
+  try {
+    const { data } = await httpInstance.get(`/customer/${id}`);
+
+    return data;
+  } catch (error) {
+    handlerHttpError(error);
+  }
+}
+
 export async function mutateCustomer(customer: Customer) {
   try {
     const { data } = !customer.id
