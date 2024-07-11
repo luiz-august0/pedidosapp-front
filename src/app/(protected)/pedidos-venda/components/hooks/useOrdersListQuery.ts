@@ -1,5 +1,5 @@
-import { EmployeePageResponseDTO } from '@/core/employees/types/dtos';
 import { getOrdersList } from '@/core/orders/services/orders';
+import { OrderPageResponseDTO } from '@/core/orders/types/dtos';
 import { convertSortModelToString } from '@/helpers/converters';
 import { FilterBuilder } from '@/shared/FilterBuilder';
 import { EnumDefaultStatus } from '@/shared/types/enums';
@@ -8,7 +8,7 @@ import { GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import { useCallback, useEffect, useState } from 'react';
 
 export default function useOrdersListQuery() {
-  const [list, setList] = useState<EmployeePageResponseDTO>();
+  const [list, setList] = useState<OrderPageResponseDTO>();
   const [pagination, setPagination] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,

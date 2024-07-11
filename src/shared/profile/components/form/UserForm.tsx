@@ -1,26 +1,40 @@
-import AvatarEditor from '@/components/AvatarEditor/AvatarEditor';
-import StandardForm from '@/components/FormTypes/StandardForm';
-import { FormButton } from '@/components/FormTypes/types/models';
-import { mutateUser } from '@/core/users/services/users';
-import { User } from '@/core/users/types/models';
-import { successToast } from '@/helpers/toast';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, CircularProgress, FormControlLabel, Switch, TextField } from '@mui/material';
-import { useSession } from 'next-auth/react';
-import { Dispatch, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { schemaValidation } from './schemaValidation';
+import AvatarEditor from "@/components/AvatarEditor/AvatarEditor";
+import StandardForm from "@/components/FormTypes/StandardForm";
+import { FormButton } from "@/components/FormTypes/types/models";
+import { mutateUser } from "@/core/users/services/users";
+import { User } from "@/core/users/types/models";
+import { successToast } from "@/helpers/toast";
+import { MultipartBean } from "@/shared/types/models";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  Button,
+  CircularProgress,
+  FormControlLabel,
+  Switch,
+  TextField,
+} from "@mui/material";
+import { useSession } from "next-auth/react";
+import { Dispatch, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { schemaValidation } from "./schemaValidation";
 
 type Props = {
   user?: User;
   userAuthenticated?: boolean;
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
-  loadingUser?: boolean;
   onSubmitForm?: () => void;
+  loadingUser?: boolean;
 };
 
-export default function UserForm({ user, userAuthenticated, open, setOpen, loadingUser, onSubmitForm }: Props) {
+export default function UserForm({
+  user,
+  userAuthenticated,
+  open,
+  setOpen,
+  onSubmitForm,
+  loadingUser,
+}: Props) {
   const [loading, setLoading] = useState<boolean>(false);
   const [updatePassword, setUpdatePassword] = useState<boolean>(false);
   const { update, data } = useSession();
@@ -28,9 +42,10 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
   const form = useForm<User>({
     defaultValues: {
       active: true,
-      login: '',
-      password: '',
+      login: "",
+      password: "",
       photoMultipart: undefined,
+      photo: undefined,
     },
     resolver: yupResolver(schemaValidation(updatePassword)),
   });
@@ -51,7 +66,7 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
         id: user.id,
         login: user?.login,
         password: undefined,
-        photoMultipart: user?.photoMultipart,
+        photo: user?.photo,
       });
     }
   }, [user]);
@@ -66,7 +81,7 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
       user: {
         ...data?.user,
         login: user.login,
-        photo: user.photo ?? '',
+        photo: user.photo ?? "",
       },
     });
   };
@@ -81,7 +96,7 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
         }
 
         setUpdatePassword(false);
-        successToast('Usuário salvo com sucesso!');
+        successToast("Usuário salvo com sucesso!");
         setLoading(false);
         handleClose();
         onSubmitForm?.();
@@ -91,28 +106,39 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
 
   const buttons: FormButton[] = [
     {
-      id: 'cancel',
-      title: 'Cancelar',
-      color: 'primary',
+      id: "cancel",
+      title: "Cancelar",
+      color: "primary",
       onClick: handleClose,
-      variant: 'outlined',
+      variant: "outlined",
     },
     {
-      id: 'submit',
-      title: 'Salvar',
+      id: "submit",
+      title: "Salvar",
       isSubmit: true,
-      color: 'primary',
+      color: "primary",
       onClick: handleSubmit(onSubmit),
       loading: loading,
-      variant: 'contained',
+      variant: "contained",
     },
   ];
+
+  const handleChangePhoto = (value?: MultipartBean) => {
+    setValue("photoMultipart", value);
+    setValue("photo", undefined);
+  };
 
   return (
     <FormProvider {...form}>
       <StandardForm
         formButtons={buttons}
-        formTitle={userAuthenticated ? 'Editar meu usuário' : user ? `Usuário #${user.id}` : 'Novo'}
+        formTitle={
+          userAuthenticated
+            ? "Editar meu usuário"
+            : user
+            ? `Usuário #${user.id}`
+            : "Novo"
+        }
         handleClose={handleClose}
         open={open}
       >
@@ -125,16 +151,20 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
             {(userAuthenticated || user?.id) && (
               <div
                 className="flex items-center"
-                style={{ justifyContent: userAuthenticated ? 'flex-end' : 'space-between' }}
+                style={{
+                  justifyContent: userAuthenticated
+                    ? "flex-end"
+                    : "space-between",
+                }}
               >
                 {!userAuthenticated && (
                   <FormControlLabel
-                    sx={{ margin: '0', marginBottom: '16px' }}
+                    sx={{ margin: "0", marginBottom: "16px" }}
                     value="top"
                     control={
                       <Switch
-                        checked={watch('active')}
-                        onChange={() => setValue('active', !watch('active'))}
+                        checked={watch("active")}
+                        onChange={() => setValue("active", !watch("active"))}
                         name="active"
                         color="primary"
                         id="user-active-switch"
@@ -144,27 +174,36 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
                     labelPlacement="top"
                   />
                 )}
-                <Button onClick={() => setUpdatePassword(true)} variant={'outlined'} color={'primary'}>
+                <Button
+                  onClick={() => setUpdatePassword(true)}
+                  variant={"outlined"}
+                  color={"primary"}
+                >
                   Alterar senha
                 </Button>
               </div>
             )}
             <div className="flex flex-col gap-4">
               <FormControlLabel
-                sx={{ margin: '0', marginBottom: '16px', justifyContent: 'center', width: '100%' }}
+                sx={{
+                  margin: "0",
+                  marginBottom: "16px",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
                 value="top"
                 control={
                   <AvatarEditor
-                    imageUrl={watch('photoMultipart')?.file}
-                    onChange={(value) => setValue('photoMultipart', value)}
-                    onRemove={() => setValue('photoMultipart', undefined)}
+                    imageUrl={watch("photo") ?? watch("photoMultipart")?.file}
+                    onChange={(value) => handleChangePhoto(value)}
+                    onRemove={() => handleChangePhoto(undefined)}
                   />
                 }
                 label="Foto de perfil"
                 labelPlacement="top"
               />
               <TextField
-                {...register('login')}
+                {...register("login")}
                 required
                 fullWidth
                 id="user-login-text"
@@ -175,7 +214,7 @@ export default function UserForm({ user, userAuthenticated, open, setOpen, loadi
               />
               {updatePassword && (
                 <TextField
-                  {...register('password')}
+                  {...register("password")}
                   fullWidth
                   id="user-password-text"
                   label="Senha"

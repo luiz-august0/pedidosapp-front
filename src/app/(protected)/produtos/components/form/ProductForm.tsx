@@ -153,7 +153,7 @@ export default function ProductForm({ open, setOpen, product, onSubmitForm }: Pr
             >
               {Object.entries(EnumUnitProduct).map(([key, value]) => (
                 <MenuItem key={key} value={key}>
-                  {value.value}
+                  {value.label}
                 </MenuItem>
               ))}
             </Select>

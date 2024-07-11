@@ -1,18 +1,18 @@
-import AvatarEditor from '@/components/AvatarEditor/AvatarEditor';
-import StandardForm from '@/components/FormTypes/StandardForm';
-import { FormButton } from '@/components/FormTypes/types/models';
-import { InputMaskField } from '@/components/InputMaskField/InputMaskField';
-import { mutateEmployee } from '@/core/employees/services/employees';
-import { EmployeeRequestDTO } from '@/core/employees/types/dtos';
-import { Employee } from '@/core/employees/types/models';
-import { convertUrlToReadeableFile } from '@/helpers/converters';
-import { getDigits, getFilenameFromUrl } from '@/helpers/general';
-import { successToast } from '@/helpers/toast';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { CircularProgress, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
-import { Dispatch, useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import schemaValidation from './schemaValidation';
+import AvatarEditor from "@/components/AvatarEditor/AvatarEditor";
+import StandardForm from "@/components/FormTypes/StandardForm";
+import { FormButton } from "@/components/FormTypes/types/models";
+import { InputMaskField } from "@/components/InputMaskField/InputMaskField";
+import { mutateEmployee } from "@/core/employees/services/employees";
+import { EmployeeRequestDTO } from "@/core/employees/types/dtos";
+import { Employee } from "@/core/employees/types/models";
+import { getDigits } from "@/helpers/general";
+import { successToast } from "@/helpers/toast";
+import { MultipartBean } from "@/shared/types/models";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FormControlLabel, Switch, TextField, Typography } from "@mui/material";
+import { Dispatch, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import schemaValidation from "./schemaValidation";
 
 type Props = {
   open: boolean;
@@ -21,13 +21,27 @@ type Props = {
   onSubmitForm?: () => void;
 };
 
-export default function EmployeeForm({ open, setOpen, employee, onSubmitForm }: Props) {
+export default function EmployeeForm({
+  open,
+  setOpen,
+  employee,
+  onSubmitForm,
+}: Props) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingEmployee, setLoadingEmployee] = useState<boolean>(true);
 
   const form = useForm<EmployeeRequestDTO>({
     resolver: yupResolver(schemaValidation),
   });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    reset,
+    clearErrors,
+  } = form;
 
   const loadEmployee = async () => {
     if (open) {
@@ -40,43 +54,28 @@ export default function EmployeeForm({ open, setOpen, employee, onSubmitForm }: 
           cpf: employee.cpf,
           email: employee.email,
           active: employee.active,
-          photo: employee.user.photo
-            ? {
-                file: (await convertUrlToReadeableFile(employee.user.photo)) as string,
-                filename: getFilenameFromUrl(employee.user.photo),
-              }
-            : undefined,
+          photo: employee.user.photo,
+          photoMultipart: undefined,
         });
       } else {
         reset({
-          login: '',
+          login: "",
           password: undefined,
-          name: '',
-          contact: '',
-          cpf: '',
-          email: '',
+          name: "",
+          contact: "",
+          cpf: "",
+          email: "",
           active: true,
           photo: undefined,
+          photoMultipart: undefined,
         });
       }
-
-      setLoadingEmployee(false);
     }
   };
 
   useEffect(() => {
     loadEmployee();
   }, [employee, form, open]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-    reset,
-    clearErrors,
-  } = form;
 
   const handleClose = () => {
     setOpen(false);
@@ -87,13 +86,13 @@ export default function EmployeeForm({ open, setOpen, employee, onSubmitForm }: 
 
     const submitData: EmployeeRequestDTO = {
       ...data,
-      cpf: getDigits(data.cpf ?? ''),
-      contact: getDigits(data.contact ?? ''),
+      cpf: getDigits(data.cpf ?? ""),
+      contact: getDigits(data.contact ?? ""),
     };
 
     await mutateEmployee(submitData, employee?.id)
       .then(() => {
-        successToast('Funcionário salvo com sucesso!');
+        successToast("Funcionário salvo com sucesso!");
         setLoading(false);
         handleClose();
         onSubmitForm?.();
@@ -103,153 +102,161 @@ export default function EmployeeForm({ open, setOpen, employee, onSubmitForm }: 
 
   const buttons: FormButton[] = [
     {
-      id: 'cancel',
-      title: 'Cancelar',
-      color: 'primary',
+      id: "cancel",
+      title: "Cancelar",
+      color: "primary",
       onClick: handleClose,
-      variant: 'outlined',
+      variant: "outlined",
     },
     {
-      id: 'submit',
-      title: 'Salvar',
+      id: "submit",
+      title: "Salvar",
       isSubmit: true,
-      color: 'primary',
+      color: "primary",
       onClick: handleSubmit(onSubmit),
       loading: loading,
-      variant: 'contained',
+      variant: "contained",
     },
   ];
+
+  const handleChangePhoto = (value?: MultipartBean) => {
+    setValue("photoMultipart", value);
+    setValue("photo", undefined);
+  };
 
   return (
     <FormProvider {...form}>
       <StandardForm
         formButtons={buttons}
-        formTitle={employee ? `Funcionário #${employee.id}` : 'Novo'}
+        formTitle={employee ? `Funcionário #${employee.id}` : "Novo"}
         handleClose={handleClose}
         open={open}
       >
-        {loadingEmployee ? (
-          <div className="flex justify-center">
-            <CircularProgress />
-          </div>
-        ) : (
-          <div className="flex flex-col mt-4 gap-4 items-start">
-            <FormControlLabel
-              sx={{ margin: '0', marginBottom: '16px' }}
-              value="top"
-              control={
-                <Switch
-                  checked={watch('active')}
-                  onChange={() => setValue('active', !watch('active'))}
-                  name="active"
-                  color="primary"
-                  id="employee-active-switch"
-                />
-              }
-              label="Ativo"
-              labelPlacement="top"
-            />
-            <Typography fontSize={18} fontWeight={'bold'}>
-              Dados principais
-            </Typography>
-            <FormControlLabel
-              sx={{ margin: '0', marginBottom: '16px', justifyContent: 'center', width: '100%' }}
-              value="top"
-              control={
-                <AvatarEditor
-                  imageUrl={watch('photo')?.file}
-                  onChange={(value) => setValue('photo', value)}
-                  onRemove={() => setValue('photo', undefined)}
-                  width={100}
-                  height={100}
-                />
-              }
-              label="Foto de perfil"
-              labelPlacement="top"
+        <div className="flex flex-col mt-4 gap-4 items-start">
+          <FormControlLabel
+            sx={{ margin: "0", marginBottom: "16px" }}
+            value="top"
+            control={
+              <Switch
+                checked={watch("active")}
+                onChange={() => setValue("active", !watch("active"))}
+                name="active"
+                color="primary"
+                id="employee-active-switch"
+              />
+            }
+            label="Ativo"
+            labelPlacement="top"
+          />
+          <Typography fontSize={18} fontWeight={"bold"}>
+            Dados principais
+          </Typography>
+          <FormControlLabel
+            sx={{
+              margin: "0",
+              marginBottom: "16px",
+              justifyContent: "center",
+              width: "100%",
+            }}
+            value="top"
+            control={
+              <AvatarEditor
+                imageUrl={watch("photo") ?? watch("photoMultipart")?.file}
+                onChange={(value) => handleChangePhoto(value)}
+                onRemove={() => handleChangePhoto(undefined)}
+                width={100}
+                height={100}
+              />
+            }
+            label="Foto de perfil"
+            labelPlacement="top"
+          />
+          <TextField
+            {...register("name")}
+            required
+            fullWidth
+            id="employee-name-text"
+            label="Nome"
+            name="name"
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
+          <TextField
+            {...register("email")}
+            fullWidth
+            id="employee-email-text"
+            label="E-mail"
+            name="email"
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
+          <InputMaskField
+            mask="999.999.999-99"
+            value={watch("cpf")}
+            onChange={(e) => {
+              clearErrors("cpf");
+              setValue("cpf", e.target.value);
+            }}
+          >
+            {() => (
+              <TextField
+                fullWidth
+                id="employee-cpf-text"
+                label="CPF"
+                name="cpf"
+                error={!!errors.cpf}
+                helperText={errors.cpf?.message}
+              />
+            )}
+          </InputMaskField>
+          <InputMaskField
+            mask="(99) 99999-9999"
+            value={watch("contact")}
+            onChange={(e) => {
+              clearErrors("contact");
+              setValue("contact", e.target.value);
+            }}
+          >
+            {() => (
+              <TextField
+                fullWidth
+                id="employee-contact-text"
+                label="Contato"
+                name="contact"
+                error={!!errors.contact}
+                helperText={errors.contact?.message}
+              />
+            )}
+          </InputMaskField>
+          <Typography
+            fontSize={18}
+            fontWeight={"bold"}
+            sx={{ marginTop: "10px" }}
+          >
+            Dados para acesso ao sistema
+          </Typography>
+          <div className="flex flex-row gap-4 justify-between w-full">
+            <TextField
+              {...register("login")}
+              fullWidth
+              id="employee-login-text"
+              label="Login"
+              name="login"
+              error={!!errors.login}
+              helperText={errors.login?.message}
             />
             <TextField
-              {...register('name')}
-              required
+              {...register("password")}
               fullWidth
-              id="employee-name-text"
-              label="Nome"
-              name="name"
-              error={!!errors.name}
-              helperText={errors.name?.message}
+              id="employee-password-text"
+              label="Senha"
+              name="password"
+              type="password"
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
-            <TextField
-              {...register('email')}
-              fullWidth
-              id="employee-email-text"
-              label="E-mail"
-              name="email"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-            <InputMaskField
-              mask="999.999.999-99"
-              value={watch('cpf')}
-              onChange={(e) => {
-                clearErrors('cpf');
-                setValue('cpf', e.target.value);
-              }}
-            >
-              {() => (
-                <TextField
-                  fullWidth
-                  id="employee-cpf-text"
-                  label="CPF"
-                  name="cpf"
-                  error={!!errors.cpf}
-                  helperText={errors.cpf?.message}
-                />
-              )}
-            </InputMaskField>
-            <InputMaskField
-              mask="(99) 99999-9999"
-              value={watch('contact')}
-              onChange={(e) => {
-                clearErrors('contact');
-                setValue('contact', e.target.value);
-              }}
-            >
-              {() => (
-                <TextField
-                  fullWidth
-                  id="employee-contact-text"
-                  label="Contato"
-                  name="contact"
-                  error={!!errors.contact}
-                  helperText={errors.contact?.message}
-                />
-              )}
-            </InputMaskField>
-            <Typography fontSize={18} fontWeight={'bold'} sx={{ marginTop: '10px' }}>
-              Dados para acesso ao sistema
-            </Typography>
-            <div className="flex flex-row gap-4 justify-between w-full">
-              <TextField
-                {...register('login')}
-                fullWidth
-                id="employee-login-text"
-                label="Login"
-                name="login"
-                error={!!errors.login}
-                helperText={errors.login?.message}
-              />
-              <TextField
-                {...register('password')}
-                fullWidth
-                id="employee-password-text"
-                label="Senha"
-                name="password"
-                type="password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-              />
-            </div>
           </div>
-        )}
+        </div>
       </StandardForm>
     </FormProvider>
   );

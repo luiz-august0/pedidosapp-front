@@ -6,7 +6,6 @@ import { Order } from '@/core/orders/types/models';
 import { formatMoney } from '@/helpers/formatters';
 import { GridColDef, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
-import { useRouter } from 'next/navigation';
 import { Dispatch } from 'react';
 
 type Props = {
@@ -19,8 +18,6 @@ type Props = {
 };
 
 export default function OrdersTable({ list, pagination, setPagination, loading, sort, setSort }: Props) {
-  const router = useRouter();
-
   const columns: GridColDef<Order>[] = [
     {
       field: 'id',

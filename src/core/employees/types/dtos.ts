@@ -9,5 +9,6 @@ export type EmployeeRequestDTO = Pick<
 > & {
   login: string;
   password?: string;
-  photo?: MultipartBean;
+  photo?: string;
+  photoMultipart?: MultipartBean;
 };
